@@ -13,6 +13,13 @@
 * data/patients.csv
 * data/main_summary.csv
 
+Googleドライブで管理している最新データをダウンロードする場合は下記コマンドを実行する。
+
+```
+$ wget "https://docs.google.com/spreadsheets/d/12qStuXjsI8GE8qI1mLPLV--6TQcxAMPDu3-k9RCHN1k/export?format=csv&gid=0" -O data/patients.csv
+$ wget "https://docs.google.com/spreadsheets/d/1DdluQBSQSiACG1CaIg4K3K-HVeGGThyecRHSA84lL6I/export?format=csv&gid=0" -O data/main_summary.csv
+```
+
 ## 使い方
 
 
