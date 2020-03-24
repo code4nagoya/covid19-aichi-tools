@@ -8,6 +8,13 @@
 
 ## 準備
 
+リポジトリをクローンする。
+
+```
+$ git clone https://github.com/hajime-miyauchi/covid19-aichi-tools.git
+$ cd covid19-aichi-tools
+```
+
 下記の2ファイルを更新する。
 
 * data/patients.csv
@@ -24,8 +31,6 @@ $ wget "https://docs.google.com/spreadsheets/d/1DdluQBSQSiACG1CaIg4K3K-HVeGGThye
 
 
 ```
-$ git clone https://github.com/hajime-miyauchi/covid19-aichi-tools.git
-$ cd covid19-aichi-tools
 $ python3 build_json.py | python3 pretty_json.py > data/data.json
 ```
 
