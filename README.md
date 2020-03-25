@@ -29,9 +29,13 @@ $ wget "https://docs.google.com/spreadsheets/d/1DdluQBSQSiACG1CaIg4K3K-HVeGGThye
 
 ## 使い方
 
+https://www.pref.aichi.jp/site/covid19-aichi/
+愛知県新型コロナウイルス感染症トップページの愛知県の感染症発生状況（画像）に記載のある日付をYYYY-MM-DD形式で引数に付けてコマンドを実行してください。
+
+3月25日○○時現在であれば
 
 ```
-$ python3 build_json.py | python3 pretty_json.py > data/data.json
+$ python3 build_json.py　2020-03-25 > data/data.json
 ```
 
 生成されたdata/data.jsonを、下記リポジトリのdata/data.jsonと差し替える。
