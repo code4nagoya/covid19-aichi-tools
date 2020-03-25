@@ -32,6 +32,7 @@ $ wget "https://docs.google.com/spreadsheets/d/1DdluQBSQSiACG1CaIg4K3K-HVeGGThye
 https://www.pref.aichi.jp/site/covid19-aichi/
 
 愛知県新型コロナウイルス感染症トップページの愛知県の感染症発生状況（画像）に記載のある日付を
+
 YYYY-MM-DD形式で引数に付けてコマンドを実行してください。
 
 3月25日○○時現在であれば
