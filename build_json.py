@@ -7,7 +7,7 @@ patiants_list = []
 patiants_summary_dic = {}
 main_summary_dic = {}
 
-with open('data/patients.csv') as csvfile:
+with open('data/patients.csv', 'r', encoding="utf-8") as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         patiants_list.append(row)
@@ -36,7 +36,7 @@ for date in datelist:
 
 main_summary_dic = {}
 
-with open('data/main_summary.csv') as csvfile:
+with open('data/main_summary.csv', 'r', encoding="utf-8") as csvfile:
     reader = csv.reader(csvfile)
     for row in reader:
         main_summary_dic[row[0]] = int(row[1])
