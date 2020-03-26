@@ -38,7 +38,7 @@ YYYY-MM-DD形式で引数に付けてコマンドを実行してください。
 3月25日○○時現在であれば
 
 ```
-$ python3 build_json.py　2020-03-25 > data/data.json
+$ python3 build_json.py 2020-03-25 > data/data.json
 ```
 
 生成されたdata/data.jsonを、下記リポジトリのdata/data.jsonと差し替える。
