@@ -1,13 +1,16 @@
 import csv
 import json
 from datetime import datetime, date, time, timedelta
-import sys
+import io, sys
 
 patiants_list = []
 patiants_summary_dic = {}
 main_summary_dic = {}
 
-with open('data/patients.csv') as csvfile:
+# 引数を取得 異常系処理はしてないので注意
+args = sys.argv
+
+with open('data/patients.csv', 'r', encoding="utf-8") as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         patiants_list.append(row)
@@ -16,7 +19,7 @@ with open('data/patients.csv') as csvfile:
 
 # 日付のリストを生成
 strdt = datetime.strptime("2020-01-26", '%Y-%m-%d')  # 開始日
-enddt = datetime.now()  # 終了日
+enddt = datetime.strptime(args[1], '%Y-%m-%d')  # 終了日
 
 # 日付差の日数を算出（リストに最終日も含めたいので、＋１しています）
 days_num = (enddt - strdt).days + 1
@@ -36,7 +39,7 @@ for date in datelist:
 
 main_summary_dic = {}
 
-with open('data/main_summary.csv') as csvfile:
+with open('data/main_summary.csv', 'r', encoding="utf-8") as csvfile:
     reader = csv.reader(csvfile)
     for row in reader:
         main_summary_dic[row[0]] = int(row[1])
@@ -93,4 +96,5 @@ data = {
     }
 }
 
-print(json.dumps(data))
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+print(json.dumps(data, indent=4, ensure_ascii=False))
