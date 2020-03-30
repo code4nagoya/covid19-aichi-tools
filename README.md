@@ -15,16 +15,18 @@ $ git clone https://github.com/hajime-miyauchi/covid19-aichi-tools.git
 $ cd covid19-aichi-tools
 ```
 
-下記の2ファイルを更新する。
+下記の3ファイルを更新する。
 
 * data/patients.csv
 * data/main_summary.csv
+* data/inspections_summary.csv
 
 Googleドライブで管理している最新データをダウンロードする場合は下記コマンドを実行する。
 
 ```
 $ wget "https://docs.google.com/spreadsheets/d/12qStuXjsI8GE8qI1mLPLV--6TQcxAMPDu3-k9RCHN1k/export?format=csv&gid=0" -O data/patients.csv
 $ wget "https://docs.google.com/spreadsheets/d/1DdluQBSQSiACG1CaIg4K3K-HVeGGThyecRHSA84lL6I/export?format=csv&gid=0" -O data/main_summary.csv
+$ wget "https://docs.google.com/spreadsheets/d/1ivROd_s3AmvY480XKEZR_COAlx08gOGxZYRYubxghP0/export?format=csv&gid=0" -O data/inspections_summary.csv
 ```
 
 ## 使い方
@@ -90,3 +92,18 @@ https://github.com/code4nagoya/covid19
 | 転院 | 数値 |
 | 死亡 | 数値 | 
 
+### data/inspections_summary.csv
+
+「検査実施件数」のグラフに使用するデータです。
+
+出典元: https://www.pref.aichi.jp/site/covid19-aichi/kansensya-kensa.html の新型コロナウイルス遺伝子検査件数
+
+* 下記のヘッダ行が必要です。
+* ヘッダ行の各カラム名がそのままJSONに出力されます。
+
+| ヘッダ | データ | 例 |
+| --- | --- | --- |
+| 検査日 | YYYY/m/d | 2020/03/02 |
+| 検査件数（件）| 数値 | 639 |
+| 陽性者数（人）| 数値 | 30 |
+| 備考 | 文字列 | 1月30日（木曜日）～3月1日（日曜日） |
