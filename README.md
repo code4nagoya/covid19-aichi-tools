@@ -47,6 +47,17 @@ $ python3 build_json.py 2020-03-25 > data/data.json
 
 https://github.com/code4nagoya/covid19
 
+## 検査実施件数のみを更新する場合
+
+```
+$ wget "https://docs.google.com/spreadsheets/d/1ivROd_s3AmvY480XKEZR_COAlx08gOGxZYRYubxghP0/export?format=csv&gid=0" -O data/inspections_summary.csv
+$ python3 build_inspection_json.py > data/data_inspections.json
+```
+
+生成されたdata/data_inspections.jsonを、下記リポジトリのdata/data_inspections.jsonと差し替える。
+
+https://github.com/code4nagoya/covid19
+
 ## データの形式について
 
 ### data/patients.csv

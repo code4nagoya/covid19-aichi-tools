@@ -3,3 +3,4 @@ data/data.json
 data/inspections_summary.csv
 data/main_summary.csv
 data/patients.csv
+data/data_inspections.json
