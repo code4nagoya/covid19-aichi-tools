@@ -21,4 +21,4 @@ data = {
 }
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-print(json.dumps(data, indent=4, ensure_ascii=False))
+print(json.dumps(data, indent=2, ensure_ascii=False))
