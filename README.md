@@ -29,6 +29,32 @@ $ wget "https://docs.google.com/spreadsheets/d/1DdluQBSQSiACG1CaIg4K3K-HVeGGThye
 $ wget "https://docs.google.com/spreadsheets/d/1ivROd_s3AmvY480XKEZR_COAlx08gOGxZYRYubxghP0/export?format=csv&gid=0" -O data/inspections_summary.csv
 ```
 
+## data/patients.csvのスクレイピングによる生成について(実験段階)
+
+data/patients.csvについては下記コマンドにより、愛知県の公式サイトで公開されているPDFから生成することもできます。
+
+### 事前準備
+
+ghostscriptが必要です。インストールする場合は例えばUbuntuであれば下記コマンドを実行してインストールしてください。
+
+```
+$ sudo apt-get install ghostscript
+```
+
+また、いくつかのモジュールをpipでインストールする必要があります。
+
+```
+$ sudo pip install -r requirements.txt
+```
+
+### スクレイピングの実行
+
+下記コマンドを実行すると、data/patients.csvが生成されます。
+
+```
+python3 scrape_patiants.py
+```
+
 ## 使い方
 
 https://www.pref.aichi.jp/site/covid19-aichi/
