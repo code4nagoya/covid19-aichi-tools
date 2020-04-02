@@ -44,6 +44,31 @@ with open('data/main_summary.csv', 'r', encoding="utf-8") as csvfile:
     for row in reader:
         main_summary_dic[row[0]] = int(row[1])
 
+### ここから名古屋市のデータ生成
+
+patiants_nagoya_list = []
+patiants_nagoya_summary_dic = {}
+
+# 引数を取得 異常系処理はしてないので注意
+args = sys.argv
+
+with open('data/patients_nagoya.csv', 'r', encoding="utf-8") as csvfile:
+    reader = csv.DictReader(csvfile)
+    for row in reader:
+        patiants_nagoya_list.append(row)
+        patiants_nagoya_summary_dic.setdefault(row['date'], 0)
+        patiants_nagoya_summary_dic[row['date']] += 1
+
+patients_nagoya_summary_list = []
+
+for date in datelist:
+    patiants_nagoya_summary_dic.setdefault(date.strftime('%Y-%m-%d'), 0)
+    patients_nagoya_summary_list.append({
+        "日付": date.strftime('%Y-%m-%d'),
+        "小計": patiants_nagoya_summary_dic[date.strftime('%Y-%m-%d')]
+    })
+
+
 # 検査件数の読み込み
 inspections_summary_list = []
 with open('data/inspections_summary.csv', 'r', encoding="utf-8") as csvfile:
@@ -62,6 +87,14 @@ data = {
     "patients_summary" : {
         "date": datetime.now().strftime('%Y/%m/%d %H:%M'),
         "data": patients_summary_list
+    },
+    "patients_nagoya": {
+        "date": datetime.now().strftime('%Y/%m/%d %H:%M'),
+        "data": patiants_nagoya_list
+    },
+    "patients_nagoya_summary" : {
+        "date": datetime.now().strftime('%Y/%m/%d %H:%M'),
+        "data": patients_nagoya_summary_list
     },
     "inspections_summary" : {
         "date": datetime.now().strftime('%Y/%m/%d %H:%M'),

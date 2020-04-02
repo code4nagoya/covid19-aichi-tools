@@ -27,6 +27,7 @@ Googleドライブで管理している最新データをダウンロードす�
 $ wget "https://docs.google.com/spreadsheets/d/12qStuXjsI8GE8qI1mLPLV--6TQcxAMPDu3-k9RCHN1k/export?format=csv&gid=0" -O data/patients.csv
 $ wget "https://docs.google.com/spreadsheets/d/1DdluQBSQSiACG1CaIg4K3K-HVeGGThyecRHSA84lL6I/export?format=csv&gid=0" -O data/main_summary.csv
 $ wget "https://docs.google.com/spreadsheets/d/1ivROd_s3AmvY480XKEZR_COAlx08gOGxZYRYubxghP0/export?format=csv&gid=0" -O data/inspections_summary.csv
+$ wget "https://docs.google.com/spreadsheets/d/1kFZkKvgAzSagl7Lm_68lIlOf0TfxG86bZSwxQhbxmOg/export?format=csv&gid=0" -O data/patients_nagoya.csv
 ```
 
 ## 使い方
