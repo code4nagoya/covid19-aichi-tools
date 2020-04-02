@@ -11,7 +11,7 @@
 リポジトリをクローンする。
 
 ```
-$ git clone https://github.com/hajime-miyauchi/covid19-aichi-tools.git
+$ git clone https://github.com/code4nagoya/covid19-aichi-tools.git
 $ cd covid19-aichi-tools
 ```
 
