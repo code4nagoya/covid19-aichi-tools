@@ -55,6 +55,48 @@ $ sudo pip install -r requirements.txt
 python3 scrape_patiants.py
 ```
 
+## data/main_summary.csvのスクレイピングによる生成について(実験段階)
+
+data/main_summary.csvについては下記コマンドにより、愛知県の公式サイトで公開されている画像から生成することもできます。
+
+### 事前準備
+
+Tesseractが必要です。インストールする場合は例えばUbuntuであれば下記コマンドを実行してインストールしてください。
+
+```
+$ sudo add-apt-repository ppa:alex-p/tesseract-ocr
+$ sudo apt update
+
+$ sudo apt install tesseract-ocr
+$ sudo apt install libtesseract-dev
+$ sudo apt install tesseract-ocr-jpn  tesseract-ocr-jpn-vert
+```
+
+また、pyocrモジュールをpipでインストールする必要があります。
+
+```
+$ sudo pip3 install pyocr
+```
+
+### スクレイピングの実行
+
+愛知県の感染症発生状況の画像をdataディレクトリ内に保存します。
+
+※ファイル名が毎回変わるので注意してください。
+
+```
+$ wget https://www.pref.aichi.jp/uploaded/image/239604.jpg -O data/main_summary.jpg
+```
+
+下記コマンドを実行すると、data/main_summary.csvが生成されます。
+
+※現時点ではCSVのフォーマットが仕様と異なっていますのでそのままでは使用できません。
+
+```
+$ python3 scrapingOccurrenceStatus.py data/main_summary.jpg > data/main_summary.csv
+```
+
+
 ## 使い方
 
 https://www.pref.aichi.jp/site/covid19-aichi/
