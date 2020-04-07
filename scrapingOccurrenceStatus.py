@@ -98,17 +98,11 @@ death_img = cv2.dilate(death_img,kernel,iterations = 1)
 death_txt = textFrom(death_img)
 
 
-#print (inspectors_txt)
-#print (positive_txt)
-#print (hospitalized_txt)
-#print (mild_moderate_txt)
-#print (severe_txt)
-#print (discharge_txt)
-#print (transfer_txt)
-#print (death_txt)
-
-stock = [inspectors_txt, positive_txt, hospitalized_txt, mild_moderate_txt, severe_txt, discharge_txt, transfer_txt, death_txt]
-
-writer = csv.writer(sys.stdout, lineterminator='\n')
-# 出力
-writer.writerow(stock)
+print ("検査実施人数," + inspectors_txt)
+print ("陽性患者数," + positive_txt)
+print ("入院中," + hospitalized_txt)
+print ("軽症・中等症," + mild_moderate_txt)
+print ("重症," + severe_txt)
+print ("退院," + discharge_txt)
+print ("転院," + transfer_txt)
+print ("死亡," + death_txt)
