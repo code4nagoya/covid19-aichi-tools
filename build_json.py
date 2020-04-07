@@ -51,7 +51,7 @@ with open('data/inspections_summary.csv', 'r', encoding="utf-8") as csvfile:
     for row in reader:
         inspections_summary_list.append({
             "日付": datetime.strptime(row['検査日'], '%Y/%m/%d').strftime('%Y-%m-%d'),
-            "合算": row['合算']
+            "合算": row['合算'],
             "小計": row['検査件数（件）']
         })
 
