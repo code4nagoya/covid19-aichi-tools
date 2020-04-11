@@ -11,4 +11,4 @@ jobs:
       - name: build
         run: |
           IMAGE_NAME=covid19-aichi-tools:${GITHUB_REF#refs/heads/}
-          docker build . --${GITHUB_REPOSITORY}/${IMAGE_NAME}        
+          docker build . -t ${GITHUB_REPOSITORY}/${IMAGE_NAME}        
