@@ -6,8 +6,9 @@ jobs:
     name : generate
     runs-on: ubuntu-latest
     steps:
-      - name: checkout and build
+      - name: checkout
         uses: actions/checkout@v2
+      - name: build
         run: |
           IMAGE_NAME=covid19-aichi-tools:${GITHUB_REF#refs/heads/}
           docker build . --${GITHUB_REPOSITORY}/${IMAGE_NAME}        
