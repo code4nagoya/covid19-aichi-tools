@@ -151,5 +151,7 @@ https://github.com/code4nagoya/covid19
 ## Docker環境について
 以下のコマンドで動く 生成ファイルを表示するところまで実装
 ```
-# usage : $ docker build . -t covid19-aichi-tools
+$ docker build . -t covid19-aichi-tools
+$ docker run --rm -v /covid19/data:./data covid19-aichi-tools
+$ ls -lh data/
 ```
