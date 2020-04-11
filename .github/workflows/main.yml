@@ -7,6 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name : setup
-        uses : actions/docker/cli
+        uses : actions/docker/cli@master
         with :
           args : build --tag=repo:latest .
