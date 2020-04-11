@@ -1,8 +1,7 @@
 name : generate data.json other files
-on :
-   - push
-  - schedule :
-    - cron : '*/15 * * * *'
+on : push
+#  - schedule :
+#    - cron : '*/15 * * * *'
 
 jobs:
   build:
