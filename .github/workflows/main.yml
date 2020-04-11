@@ -5,6 +5,7 @@ jobs:
   build:
     name : generate
     steps:
-      uses : actions/docker/cli
-      args : 
-        - build --tag=repo:latest .
+      - name : setup
+        uses : actions/docker/cli
+        args : 
+          - build --tag=repo:latest .
