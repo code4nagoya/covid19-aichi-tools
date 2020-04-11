@@ -1,0 +1,10 @@
+name : generate data.json other files
+on : push
+
+jobs:
+  build:
+    name : generate
+    steps:
+      uses : actions/docker/cli
+      args : 
+        - build --tag=repo:latest .
