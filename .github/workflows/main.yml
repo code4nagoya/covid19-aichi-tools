@@ -1,0 +1,25 @@
+name : generate data.json other files
+on : 
+  push :
+  schedule :
+    - cron : '0 9,13,18 * * *'
+
+jobs:
+  build:
+    name : generate
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: build
+        run: |
+          IMAGE_NAME=covid19-aichi-tools:${GITHUB_REF#refs/heads/}
+          docker build . -t ${GITHUB_REPOSITORY}/${IMAGE_NAME}
+          docker images
+          docker run --rm -v $PWD/data:/covid19/data ${GITHUB_REPOSITORY}/${IMAGE_NAME}
+          ls -lh data
+      - name: upload
+        uses: actions/upload-artifact@v1
+        with:
+          name: upload-data
+          path: ./data
