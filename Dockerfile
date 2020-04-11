@@ -27,5 +27,5 @@ RUN wget "https://docs.google.com/spreadsheets/d/12qStuXjsI8GE8qI1mLPLV--6TQcxAM
 RUN python3 /covid19/scrape_patiants.py
 RUN python3 /covid19/build_json.py `date -d "1 day ago" +'%Y-%m-%d'` > /covid19/data/data.json
 
-RUN cat /covid19/data/*.json /covid19/data/*.csv
+#RUN cat /covid19/data/*.json /covid19/data/*.csv
 RUN ls /covid19/data/*.json /covid19/data/*.csv

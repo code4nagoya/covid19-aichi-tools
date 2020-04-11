@@ -11,4 +11,11 @@ jobs:
       - name: build
         run: |
           IMAGE_NAME=covid19-aichi-tools:${GITHUB_REF#refs/heads/}
-          docker build . -t ${GITHUB_REPOSITORY}/${IMAGE_NAME}        
+          docker build . -t ${GITHUB_REPOSITORY}/${IMAGE_NAME}
+          docker images
+          docker cp ${GITHUB_REPOSITORY}/${IMAGE_NAME}:/covid19/data ./data
+      - name: upload
+        uses: actions/upload-artifact@v1
+        with:
+          name: data
+          path: ./data
