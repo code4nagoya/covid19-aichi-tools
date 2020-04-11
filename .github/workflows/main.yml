@@ -4,6 +4,7 @@ on : push
 jobs:
   build:
     name : generate
+    runs-on: ubuntu-latest
     steps:
       - name : setup
         uses : actions/docker/cli
