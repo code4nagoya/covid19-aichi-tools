@@ -1,6 +1,6 @@
 # covid19-aichi-tools
 
-![generate data.json other files](https://github.com/code4nagoya/covid19-aichi-tools/workflows/generate%20data.json%20other%20files/badge.svg)
+[![generate data.json other files](https://github.com/code4nagoya/covid19-aichi-tools/workflows/generate%20data.json%20other%20files/badge.svg)](https://github.com/code4nagoya/covid19-aichi-tools/actions)
 
 [愛知県 新型コロナウイルス感染症対策サイト](https://stopcovid19.code4.nagoya)用のデータ更新用スクリプト
 
