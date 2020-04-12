@@ -24,3 +24,26 @@ jobs:
         with:
           name: upload-data
           path: ./data
+  push:
+    needs: build
+    name: push data
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          public-key: ${{ secrets.SSH_KEY_PUBLIC }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      - run: git clone -b data git@github.com:code4nagoya/covid19.git data
+      - name: upload
+        uses: actions/download-artifact@v1
+        with:
+          name: upload-data
+      - run: cp upload-data/* data
+      - run: git config --global user.email "bot@github.com"
+      - run: git config --global user.name "BOT"
+      - run: cd data && git add .
+      - run: cd data && git commit -m "update data"
+      - run: cd data && git push origin data
+
