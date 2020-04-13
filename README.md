@@ -54,7 +54,7 @@ $ sudo pip install -r requirements.txt
 下記コマンドを実行すると、data/patients.csvが生成されます。
 
 ```
-python3 scrape_patiants.py
+python3 scrape_patients.py
 ```
 
 ## 使い方
