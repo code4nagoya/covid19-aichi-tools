@@ -3,8 +3,8 @@ import json
 from datetime import datetime, date, time, timedelta
 import io, sys
 
-patiants_list = []
-patiants_summary_dic = {}
+patients_list = []
+patients_summary_dic = {}
 main_summary_dic = {}
 
 # 引数を取得 異常系処理はしてないので注意
@@ -13,9 +13,9 @@ args = sys.argv
 with open('data/patients.csv', 'r', encoding="utf-8") as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
-        patiants_list.append(row)
-        patiants_summary_dic.setdefault(row['date'], 0)
-        patiants_summary_dic[row['date']] += 1
+        patients_list.append(row)
+        patients_summary_dic.setdefault(row['date'], 0)
+        patients_summary_dic[row['date']] += 1
 
 # 日付のリストを生成
 strdt = datetime.strptime("2020-01-26", '%Y-%m-%d')  # 開始日
@@ -31,10 +31,10 @@ for i in range(days_num):
 patients_summary_list = []
 
 for date in datelist:
-    patiants_summary_dic.setdefault(date.strftime('%Y-%m-%d'), 0)
+    patients_summary_dic.setdefault(date.strftime('%Y-%m-%d'), 0)
     patients_summary_list.append({
         "日付": date.strftime('%Y-%m-%d'),
-        "小計": patiants_summary_dic[date.strftime('%Y-%m-%d')]
+        "小計": patients_summary_dic[date.strftime('%Y-%m-%d')]
     })
 
 main_summary_dic = {}
@@ -58,7 +58,7 @@ with open('data/inspections_summary.csv', 'r', encoding="utf-8") as csvfile:
 data = {
     "patients": {
         "date": datetime.now().strftime('%Y/%m/%d %H:%M'),
-        "data": patiants_list
+        "data": patients_list
     },
     "patients_summary" : {
         "date": datetime.now().strftime('%Y/%m/%d %H:%M'),
