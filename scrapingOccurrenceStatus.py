@@ -2,15 +2,15 @@
 # 【愛知県の感染症発生状況】の自動分析プログラム
 # created by H. Sawano
 
-
+import csv
+import cv2
+import numpy as np
 import pyocr
 import pyocr.builders
-import cv2
-from PIL import Image
+import re
 import sys
-import re # 正規表現
-import numpy as np
-import csv
+from PIL import Image
+
 
 def textFrom(img):
     th = 200

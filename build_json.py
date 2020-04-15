@@ -1,7 +1,15 @@
 import csv
+import io
 import json
+import pandas as pd
+import sys
+from dateutil import tz
 from datetime import datetime, date, time, timedelta
-import io, sys
+
+# Japan Standard Time (UTC + 09:00)
+JST = tz.gettz('Asia/Tokyo')
+JST_current_time = datetime.now(tz=JST).strftime('%Y/%m/%d %H:%M')
+
 
 patients_list = []
 patients_summary_dic = {}
@@ -44,6 +52,9 @@ with open('data/main_summary.csv', 'r', encoding="utf-8") as csvfile:
     for row in reader:
         main_summary_dic[row[0]] = int(row[1])
 
+# main_summary_history.csvをPandasのDataframeに変換
+main_summary_history_df = pd.read_csv('data/main_summary_history.csv', keep_default_na=False)
+
 # 検査件数の読み込み
 inspections_summary_list = []
 with open('data/inspections_summary.csv', 'r', encoding="utf-8") as csvfile:
@@ -57,18 +68,18 @@ with open('data/inspections_summary.csv', 'r', encoding="utf-8") as csvfile:
 
 data = {
     "patients": {
-        "date": datetime.now().strftime('%Y/%m/%d %H:%M'),
+        "date": JST_current_time,
         "data": patients_list
     },
     "patients_summary" : {
-        "date": datetime.now().strftime('%Y/%m/%d %H:%M'),
+        "date": JST_current_time,
         "data": patients_summary_list
     },
     "inspections_summary" : {
-        "date": datetime.now().strftime('%Y/%m/%d %H:%M'),
+        "date": JST_current_time,
         "data": inspections_summary_list
     },
-    "lastUpdate": datetime.now().strftime('%Y/%m/%d %H:%M'),
+    "lastUpdate": JST_current_time,
     "main_summary" : {
             "attr": "検査実施人数",
             "value": main_summary_dic['検査実施人数'],
@@ -106,6 +117,10 @@ data = {
                     ]
                 }
             ]
+    },
+    "main_summary_history": {
+        "date": JST_current_time,
+        "data": json.loads(main_summary_history_df.to_json(orient='records', force_ascii=False))
     }
 }
 
