@@ -79,6 +79,10 @@ data = {
         "date": JST_current_time,
         "data": inspections_summary_list
     },
+    "main_summary_history": {
+        "date": JST_current_time,
+        "data": json.loads(main_summary_history_df.to_json(orient='records', force_ascii=False))
+    }
     "lastUpdate": JST_current_time,
     "main_summary" : {
             "attr": "検査実施人数",
@@ -117,10 +121,6 @@ data = {
                     ]
                 }
             ]
-    },
-    "main_summary_history": {
-        "date": JST_current_time,
-        "data": json.loads(main_summary_history_df.to_json(orient='records', force_ascii=False))
     }
 }
 
