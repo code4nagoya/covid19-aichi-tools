@@ -27,16 +27,16 @@ SOFTWARE.
 '''
 
 import camelot
-import os
-import re
-import pandas as pd
-from bs4 import BeautifulSoup
-import urllib.request
-from datetime import datetime
-from datetime import timedelta
-import json
 import codecs
+import json
+import os
+import pandas as pd
+import re
 import traceback
+import urllib.request
+from bs4 import BeautifulSoup
+from datetime import datetime
+
 
 base_url = "https://www.pref.aichi.jp"
 

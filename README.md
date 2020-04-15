@@ -21,6 +21,7 @@ $ cd covid19-aichi-tools
 
 * data/patients.csv
 * data/main_summary.csv
+* data/main_summary_history.csv
 * data/inspections_summary.csv
 
 Googleドライブで管理している最新データをダウンロードする場合は下記コマンドを実行する。
@@ -28,6 +29,7 @@ Googleドライブで管理している最新データをダウンロードす�
 ```
 $ wget "https://docs.google.com/spreadsheets/d/12qStuXjsI8GE8qI1mLPLV--6TQcxAMPDu3-k9RCHN1k/export?format=csv&gid=0" -O data/patients.csv
 $ wget "https://docs.google.com/spreadsheets/d/1DdluQBSQSiACG1CaIg4K3K-HVeGGThyecRHSA84lL6I/export?format=csv&gid=0" -O data/main_summary.csv
+$ wget "https://docs.google.com/spreadsheets/d/1DdluQBSQSiACG1CaIg4K3K-HVeGGThyecRHSA84lL6I/export?format=csv&gid=1019512361" -O /covid19/data/main_summary_history.csv
 $ wget "https://docs.google.com/spreadsheets/d/1ivROd_s3AmvY480XKEZR_COAlx08gOGxZYRYubxghP0/export?format=csv&gid=0" -O data/inspections_summary.csv
 ```
 
@@ -130,6 +132,29 @@ https://github.com/code4nagoya/covid19
 | 退院            | 数値            |
 | 転院            | 数値            |
 | 死亡            | 数値            |
+
+### data/main_summary_history.csv
+
+「検査陽性者状況の推移」のグラフに使用するデータです。
+
+出典元: https://www.pref.aichi.jp/site/covid19-aichi/ の検査陽性者の状況を当サイトで蓄積したデータ
+
+* 下記のヘッダ行が必要です。
+* ヘッダ行の各カラム名がそのままJSONに出力されます。
+
+| ヘッダ       | データ           | 例                                  |
+| ------------ | ---------------- | ----------------------------------- |
+| 更新日時     | YYYY/MM/dd HH:mm | 2020/04/12 23:00                    |
+| 検査実施人数 | 数値             | 4372                                |
+| 陽性患者数   | 数値             | 324                                 |
+| 入院中       | 数値             | 185                                 |
+| 軽症中等症   | 数値             | 179                                 |
+| 重症         | 数値             | 6                                   |
+| 施設入所     | 数値             | 18                                  |
+| 退院         | 数値             | 95                                  |
+| 転院         | 数値             | 2                                   |
+| 死亡         | 数値             | 24                                  |
+| 備考         | 文字列           | 検査実施人数については4月12日現在。 |
 
 ### data/inspections_summary.csv
 
