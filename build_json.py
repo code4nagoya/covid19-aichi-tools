@@ -38,12 +38,20 @@ for i in range(days_num):
 
 patients_summary_list = []
 
-for date in datelist:
-    patients_summary_dic.setdefault(date.strftime('%Y-%m-%d'), 0)
-    patients_summary_list.append({
-        "日付": date.strftime('%Y-%m-%d'),
-        "小計": patients_summary_dic[date.strftime('%Y-%m-%d')]
-    })
+# 日付の新しい順に辿って小計が 0 でない日から開始する
+foundZero = True
+for date in reversed(datelist):
+    if (not (date.strftime('%Y-%m-%d') in patients_summary_dic)) and foundZero:
+        continue
+    else:
+        foundZero = False
+        patients_summary_dic.setdefault(date.strftime('%Y-%m-%d'), 0)
+        patients_summary_list.append({
+            "日付": date.strftime('%Y-%m-%d'),
+            "小計": patients_summary_dic[date.strftime('%Y-%m-%d')]
+        })
+
+patients_summary_list = patients_summary_list[::-1] # 日付の昇順に並び替え
 
 main_summary_dic = {}
 
