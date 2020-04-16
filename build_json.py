@@ -38,13 +38,12 @@ for i in range(days_num):
 
 patients_summary_list = []
 
-# 小計0のデータは作成されないよう応急処置
 for date in datelist:
-    if date.strftime('%Y-%m-%d') in patients_summary_dic:
-        patients_summary_list.append({
-            "日付": date.strftime('%Y-%m-%d'),
-            "小計": patients_summary_dic[date.strftime('%Y-%m-%d')]
-        })
+    patients_summary_dic.setdefault(date.strftime('%Y-%m-%d'), 0)
+    patients_summary_list.append({
+        "日付": date.strftime('%Y-%m-%d'),
+        "小計": patients_summary_dic[date.strftime('%Y-%m-%d')]
+    })
 
 main_summary_dic = {}
 
