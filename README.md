@@ -20,7 +20,6 @@ $ cd covid19-aichi-tools
 下記の3ファイルを更新する。
 
 * data/patients.csv
-* data/main_summary.csv
 * data/main_summary_history.csv
 * data/inspections_summary.csv
 
@@ -28,7 +27,6 @@ Googleドライブで管理している最新データをダウンロードす�
 
 ```
 $ wget "https://docs.google.com/spreadsheets/d/12qStuXjsI8GE8qI1mLPLV--6TQcxAMPDu3-k9RCHN1k/export?format=csv&gid=0" -O data/patients.csv
-$ wget "https://docs.google.com/spreadsheets/d/1DdluQBSQSiACG1CaIg4K3K-HVeGGThyecRHSA84lL6I/export?format=csv&gid=0" -O data/main_summary.csv
 $ wget "https://docs.google.com/spreadsheets/d/1DdluQBSQSiACG1CaIg4K3K-HVeGGThyecRHSA84lL6I/export?format=csv&gid=1019512361" -O /covid19/data/main_summary_history.csv
 $ wget "https://docs.google.com/spreadsheets/d/1ivROd_s3AmvY480XKEZR_COAlx08gOGxZYRYubxghP0/export?format=csv&gid=0" -O data/inspections_summary.csv
 ```
@@ -111,27 +109,6 @@ https://github.com/code4nagoya/covid19
 | date       | YYYY-MM-DD                | 2020-02-24 |
 | w          | 曜日を表す数値(0が日曜日) | 2          |
 | short_date | YY/MM                     | 02¥/24     |
-
-### data/main_summary.csv
-
-「検査陽性者の状況」のグラフに使用するデータです。
-
-出典元: https://www.pref.aichi.jp/site/covid19-aichi/ の検査陽性者の状況
-
-* ヘッダ行は不要です。
-* ヘッダ列が必要です。
-* 下記の行が必要です。
-
-| ヘッダ列(1列目) | データ列(2列目) |
-| --------------- | --------------- |
-| 検査実施人数    | 数値            |
-| 陽性患者数      | 数値            |
-| 入院中          | 数値            |
-| 軽症・中等症    | 数値            |
-| 重症            | 数値            |
-| 退院            | 数値            |
-| 転院            | 数値            |
-| 死亡            | 数値            |
 
 ### data/main_summary_history.csv
 
