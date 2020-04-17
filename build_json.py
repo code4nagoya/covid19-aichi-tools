@@ -13,7 +13,6 @@ JST_current_time = datetime.now(tz=JST).strftime('%Y/%m/%d %H:%M')
 
 patients_list = []
 patients_summary_dic = {}
-main_summary_dic = {}
 
 # 引数を取得 異常系処理はしてないので注意
 args = sys.argv
@@ -53,12 +52,6 @@ for date in reversed(datelist):
 
 patients_summary_list = patients_summary_list[::-1] # 日付の昇順に並び替え
 
-main_summary_dic = {}
-
-with open('data/main_summary.csv', 'r', encoding="utf-8") as csvfile:
-    reader = csv.reader(csvfile)
-    for row in reader:
-        main_summary_dic[row[0]] = int(row[1])
 
 # main_summary_history.csvをPandasのDataframeに変換
 main_summary_history_df = pd.read_csv('data/main_summary_history.csv', keep_default_na=False)
@@ -75,6 +68,7 @@ with open('data/inspections_summary.csv', 'r', encoding="utf-8") as csvfile:
         })
 
 data = {
+    "lastUpdate": JST_current_time,
     "patients": {
         "date": JST_current_time,
         "data": patients_list
@@ -86,45 +80,6 @@ data = {
     "inspections_summary" : {
         "date": JST_current_time,
         "data": inspections_summary_list
-    },
-    "lastUpdate": JST_current_time,
-    "main_summary" : {
-            "attr": "検査実施人数",
-            "value": main_summary_dic['検査実施人数'],
-            "children": [
-                {
-                    "attr": "陽性患者数",
-                    "value": main_summary_dic['陽性患者数'],
-                    "children": [
-                        {
-                            "attr": "入院中",
-                            "value": main_summary_dic['入院中'],
-                            "children": [
-                                {
-                                    "attr": "軽症・中等症",
-                                    "value": main_summary_dic['軽症・中等症']
-                                },
-                                {
-                                    "attr": "重症",
-                                    "value": main_summary_dic['重症']
-                                }
-                            ]
-                        },
-                        {
-                            "attr": "退院",
-                            "value": main_summary_dic['退院']
-                        },
-                        {
-                            "attr": "転院",
-                            "value": main_summary_dic['転院']
-                        },
-                        {
-                            "attr": "死亡",
-                            "value": main_summary_dic['死亡']
-                        }
-                    ]
-                }
-            ]
     },
     "main_summary_history": {
         "date": JST_current_time,
