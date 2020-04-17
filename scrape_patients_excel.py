@@ -22,7 +22,7 @@ def findpath(url):
     for aa in soup.find_all("a"):
         link = aa.get("href")
         name = aa.get_text()
-        if "県内発生事例一覧" in name:
+        if "県内発生事例一覧" in name and "Excelファイル" in name:
             table_link = link
             break
     return table_link
