@@ -2,3 +2,4 @@ camelot-py[cv]
 pandas
 beautifulsoup4
 xlrd
+lxml
