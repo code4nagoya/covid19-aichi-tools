@@ -5,8 +5,8 @@ wget "https://docs.google.com/spreadsheets/d/1DdluQBSQSiACG1CaIg4K3K-HVeGGThyecR
 # wget "https://docs.google.com/spreadsheets/d/1ivROd_s3AmvY480XKEZR_COAlx08gOGxZYRYubxghP0/export?format=csv&gid=0" -O /covid19/data/inspections_summary.csv
 
 # 愛知県HPから感染者一覧を取得してスクレイピング
-# python3 /covid19/scrape_patients.py #PDF版
-python3 /covid19/scrape_patients_excel.py # EXCEL版
+python3 /covid19/scrape_patients.py #PDF版
+# python3 /covid19/scrape_patients_excel.py # EXCEL版
 
 # 愛知県HPから新型コロナウイルス遺伝子検査件数を取得してスクレイピング
 python3 /covid19/scrape_inspections.py
