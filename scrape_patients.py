@@ -51,12 +51,17 @@ def findpath(url):
     for aa in soup.find_all("a"):
         link = aa.get("href")
         name = aa.get_text()
-        if "県内発生事例一覧" in name and "PDFファイル" in name:
+        if "県内発生事例一覧" in name:
             table_link = link
-            break
-    return table_link
+            if "Excelファイル" in name:
+                ext = "xlsx"
+                # Excelファイルなら確定
+                break
+            elif "PDFファイル" in name:
+                ext = "pdf"
+    return table_link, ext
 
-def convert_table(FILE_PATH):
+def convert_pdf(FILE_PATH):
     # 最新版のPDFをダウンロード
     page_url = base_url + FILE_PATH
     pdf_path = "./data/source.pdf"
@@ -80,6 +85,25 @@ def convert_table(FILE_PATH):
     # print(df)
     return df
 
+def convert_xlsx(FILE_PATH):
+    # 最新版のExcelをダウンロード
+    page_url = base_url + FILE_PATH
+    xlsx_path = "./data/source.xlsx"
+    with urllib.request.urlopen(page_url) as b:
+        with open(xlsx_path, "bw") as f:
+            f.write(b.read())
+
+    df = pd.read_excel(xlsx_path, header=2, index_col=None, dtype={2: object})
+    df["発表日"] = df["発表日"].apply(exceltime2datetime)
+    df = df.replace(0,"")
+    df = add_date(df).fillna("")
+    str_index = pd.Index([str(num) for num in list(df.index)])
+    df = df.set_index(str_index)
+    # print(df)
+    # exit()
+
+    return df
+
 def add_date(df):
     basedate = df["発表日"]
     df["発表日"] = basedate.dt.strftime("%Y/%m/%d %H:%M")
@@ -94,10 +118,23 @@ def my_parser(s):
     m, d = map(int, re.findall("[0-9]{1,2}", s))
     return pd.Timestamp(year=y, month=m, day=d)
 
+def exceltime2datetime(et):
+    if et < 60:
+        days = pd.to_timedelta(et - 1, unit='days')
+    else:
+        days = pd.to_timedelta(et - 2, unit='days')
+    return pd.to_datetime('1900/1/1') + days
+
 if __name__ == "__main__":
-    FILE_PATH = findpath("/site/covid19-aichi/kansensya-kensa.html")
+    FILE_PATH, extension = findpath("/site/covid19-aichi/kansensya-kensa.html")
     try:
-        df = convert_table(FILE_PATH)
+        if extension == "xlsx":
+            df = convert_xlsx(FILE_PATH)
+        elif extension == "pdf":
+            df = convert_pdf(FILE_PATH)
+        else:
+            exit()
+
         df.to_csv('data/patients.csv', index=False, header=True)
         # convert_json(df)
     except Exception:
