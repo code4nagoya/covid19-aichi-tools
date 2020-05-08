@@ -92,7 +92,7 @@ https://github.com/code4nagoya/covid19
 
 「陽性患者数」や「陽性患者の属性」のグラフに使用するデータです。
 
-出典元: https://www.pref.aichi.jp/site/covid19-aichi/kansensya-kensa.html の県内発生事例一覧(PDFファイル)
+出典元: https://www.pref.aichi.jp/site/covid19-aichi/kansensya-kensa.html の県内発生事例一覧(PDFファイルまたはExcelファイル)
 
 * 下記のヘッダ行が必要です。
 * ヘッダ行の各カラム名がそのままJSONに出力されます。
@@ -100,7 +100,7 @@ https://github.com/code4nagoya/covid19
 | ヘッダ     | データ                    | 例         |
 | ---------- | ------------------------- | ---------- |
 | No         | 連番の数値                | 1          |
-| 発表日     | YYYY/m/d                  | 2020/2/24  |
+| 発表日     | YYYY/MM/dd HH:mm         | 2020/02/24 00:00  |
 | 年代・性別 | 文字列                    | 40代男性   |
 | 国籍       | 文字列                    | 日本       |
 | 住居地     | 文字列                    | 名古屋市   |
@@ -108,7 +108,7 @@ https://github.com/code4nagoya/covid19
 | 備考       | 文字列                    | 本県発表   |
 | date       | YYYY-MM-DD                | 2020-02-24 |
 | w          | 曜日を表す数値(0が日曜日) | 2          |
-| short_date | YY/MM                     | 02¥/24     |
+| short_date | MM/dd                     | 02¥/24     |
 
 ### data/main_summary_history.csv
 
@@ -144,7 +144,7 @@ https://github.com/code4nagoya/covid19
 
 | ヘッダ         | データ   | 例                                  |
 | -------------- | -------- | ----------------------------------- |
-| 検査日         | YYYY/m/d | 2020/03/02                          |
+| 検査日         | YYYY/MM/dd | 2020/03/02                          |
 | 検査件数（件） | 数値     | 639                                 |
 | 陽性者数（人） | 数値     | 30                                  |
 | 率             | 浮動小数点 | 1.98                              |
