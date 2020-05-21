@@ -56,6 +56,9 @@ patients_summary_list = patients_summary_list[::-1] # 日付の昇順に並び�
 # main_summary_history.csvをPandasのDataframeに変換
 main_summary_history_df = pd.read_csv('data/main_summary_history.csv', keep_default_na=False)
 
+# inspection_persons_summary.csvをPandasのDataframeに変換
+inspection_persons_summary_df = pd.read_csv('data/inspection_persons_summary.csv', keep_default_na=False)
+
 # 検査件数の読み込み
 inspections_summary_list = []
 with open('data/inspections_summary.csv', 'r', encoding="utf-8") as csvfile:
@@ -84,6 +87,10 @@ data = {
     "main_summary_history": {
         "date": JST_current_time,
         "data": json.loads(main_summary_history_df.to_json(orient='records', force_ascii=False))
+    },
+    "inspection_persons_summary": {
+        "date": JST_current_time,
+        "data": json.loads(inspection_persons_summary_df.to_json(orient='records', force_ascii=False))
     }
 }
 
