@@ -51,7 +51,7 @@ def findpath(url):
     for aa in soup.find_all("a"):
         link = aa.get("href")
         name = aa.get_text()
-        if "県内発生事例一覧" in name:
+        if "愛知県内発生事例" in name:
             table_link = link
             if "Excelファイル" in name:
                 ext = "xlsx"
