@@ -12,6 +12,7 @@ python3 /covid19/scrape_patients.py #PDF版
 
 # 愛知県HPから新型コロナウイルス遺伝子検査件数を取得してスクレイピング
 # python3 /covid19/scrape_inspections.py
+wget "https://raw.githubusercontent.com/code4nagoya/covid19/development/data/inspections_summary.csv" -O /covid19/data/inspections_summary.csv
 
 python3 /covid19/build_json.py `date -d "1 day ago" +'%Y-%m-%d'` > /covid19/data/data.json
 
