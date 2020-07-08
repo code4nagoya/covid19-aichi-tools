@@ -11,7 +11,7 @@ python3 /covid19/scrape_patients.py #PDF版
 # python3 /covid19/scrape_patients_excel.py # EXCEL版
 
 # 愛知県HPから新型コロナウイルス遺伝子検査件数を取得してスクレイピング
-python3 /covid19/scrape_inspections.py
+# python3 /covid19/scrape_inspections.py
 
 python3 /covid19/build_json.py `date -d "1 day ago" +'%Y-%m-%d'` > /covid19/data/data.json
 
