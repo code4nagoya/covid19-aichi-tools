@@ -7,12 +7,10 @@ wget "https://docs.google.com/spreadsheets/d/1-w8rowCmCG7lmuo5c0jQ0Dh2Frl4hOmpVr
 
 
 # 愛知県HPから感染者一覧を取得してスクレイピング
-python3 /covid19/scrape_patients.py #PDF版
-# python3 /covid19/scrape_patients_excel.py # EXCEL版
+python3 /covid19/scrape_patients.py
 
 # 愛知県HPから新型コロナウイルス遺伝子検査件数を取得してスクレイピング
-# python3 /covid19/scrape_inspections.py
-wget "https://raw.githubusercontent.com/code4nagoya/covid19/development/data/inspections_summary.csv" -O /covid19/data/inspections_summary.csv
+python3 /covid19/scrape_inspections.py
 
 python3 /covid19/build_json.py `date -d "1 day ago" +'%Y-%m-%d'` > /covid19/data/data.json
 
