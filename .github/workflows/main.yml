@@ -1,6 +1,8 @@
 name : generate data.json other files
 on : 
   push :
+    branches:
+      - master
   schedule :
     - cron : '0 1,4,9 * * *' #UTC
 #    - cron : '0 10,13,18 * * *' JST

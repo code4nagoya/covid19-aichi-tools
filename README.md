@@ -160,3 +160,21 @@ $ docker build . -t covid19-aichi-tools
 $ docker run --rm -v /covid19/data:./data covid19-aichi-tools
 $ ls -lh data/
 ```
+
+## Docker環境について(docker-compose 版)
+
+[docker-compose](http://docs.docker.jp/compose/install.html) がインストールされていれば、以下のコマンドで実行できます。
+スクリプトを変更しながら Docker 上での動作を確認したいときに便利です。
+
+```
+$ docker-compose run --rm covid19-aichi-tool
+```
+
+``/data`` に結果が出力されます。
+
+### Docker Image の削除
+
+毎回行う必要はありません。しばらく開発から離れる場合や容量不足の時に実行してください。
+
+1. ``docker image`` で Docker Image して "covid19-aichi-tools" の名前が付いているものを見つける
+2. ``docker rmi image名`` で削除
