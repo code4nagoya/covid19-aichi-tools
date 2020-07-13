@@ -13,9 +13,11 @@ if not os.path.exists(outdir):
     os.mkdir(outdir)
 
 def convert_table(url):
-    dfs = pd.read_html(url, match='検査日')
+    dfs = pd.read_html(url, match='検査日', header=1)
     df = dfs[0]
     
+    # 抗原検査列削除
+    df.drop(df.columns[[4, 5, 6]], axis=1, inplace=True)
     # 集計行削除
     df.drop(df.tail(1).index,inplace=True)
     
