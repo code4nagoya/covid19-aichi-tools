@@ -1,0 +1,10 @@
+version: '3.1'
+services:
+  covid19-aichi-tool:
+    build: ./
+    container_name: covid19-aichi-tool
+    restart: always
+    volumes:
+      - ./data:/covid19/data
+      - ./:/covid19
+    working_dir: "/covid19"
