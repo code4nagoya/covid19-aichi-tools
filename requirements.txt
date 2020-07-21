@@ -3,3 +3,4 @@ pandas
 beautifulsoup4
 xlrd
 lxml
+pdfminer.six==20200517
