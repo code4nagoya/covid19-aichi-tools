@@ -161,7 +161,7 @@ $ docker run --rm -v /covid19/data:./data covid19-aichi-tools
 $ ls -lh data/
 ```
 
-## Docker環境について(docker-compose 版)
+## Docker環境について(docker-compose 版) 
 
 [docker-compose](http://docs.docker.jp/compose/install.html) がインストールされていれば、以下のコマンドで実行できます。
 スクリプトを変更しながら Docker 上での動作を確認したいときに便利です。
