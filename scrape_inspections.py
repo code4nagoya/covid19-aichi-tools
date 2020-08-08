@@ -19,6 +19,9 @@ def convert_table(url):
     # 集計行削除
     df.drop(df.tail(1).index,inplace=True)
     
+    # 月別行を削除（応急処置）
+    df.drop([0, 1, 2, 3, 4],inplace=True)
+    
     # 属性調整
     df["備考"] = df["検査日"]
     df["合算"] = df["備考"].apply(is_total)
