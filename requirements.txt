@@ -4,3 +4,4 @@ beautifulsoup4
 xlrd
 lxml
 pdfminer.six==20200517
+opencv-python==4.3.0.36
