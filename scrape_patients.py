@@ -44,14 +44,14 @@ outdir = './data'
 if not os.path.exists(outdir):
     os.mkdir(outdir)
 
-def findpath(url):
+def findpath(url, searchWord):
     page_url = base_url + url
     raw_html = urllib.request.urlopen(page_url)
     soup = BeautifulSoup(raw_html, "html.parser")
     for aa in soup.find_all("a"):
         link = aa.get("href")
         name = aa.get_text()
-        if "愛知県内発生事例" in name:
+        if searchWord in name:
             table_link = link
             if "Excelファイル" in name:
                 ext = "xlsx"
@@ -61,10 +61,9 @@ def findpath(url):
                 ext = "pdf"
     return table_link, ext
 
-def convert_pdf(FILE_PATH):
+def convert_pdf(FILE_PATH, pdf_path, csv_path):
     # 最新版のPDFをダウンロード
     page_url = base_url + FILE_PATH
-    pdf_path = "./data/source.pdf"
     with urllib.request.urlopen(page_url) as b:
         with open(pdf_path, "bw") as f:
             f.write(b.read())
@@ -74,7 +73,6 @@ def convert_pdf(FILE_PATH):
         strip_text="\n", line_scale=40)
 
     # csvに保存
-    csv_path = "./data/source.csv"
     df_csv = pd.concat([table.df for table in tables])
     df_csv.to_csv(csv_path, index=False, header=False)
     df = pd.read_csv(csv_path, parse_dates=["発表日"], date_parser=my_parser)
@@ -85,10 +83,9 @@ def convert_pdf(FILE_PATH):
     # print(df)
     return df
 
-def convert_xlsx(FILE_PATH):
+def convert_xlsx(FILE_PATH, xlsx_path):
     # 最新版のExcelをダウンロード
     page_url = base_url + FILE_PATH
-    xlsx_path = "./data/source.xlsx"
     with urllib.request.urlopen(page_url) as b:
         with open(xlsx_path, "bw") as f:
             f.write(b.read())
@@ -126,15 +123,24 @@ def exceltime2datetime(et):
     return pd.to_datetime('1900/1/1') + days
 
 if __name__ == "__main__":
-    FILE_PATH, extension = findpath("/site/covid19-aichi/kansensya-kensa.html")
+    FILE_PATH1, extension1 = findpath("/site/covid19-aichi/kansensya-kensa.html", "7月まで")
+    FILE_PATH2, extension2 = findpath("/site/covid19-aichi/kansensya-kensa.html", "8月以降")
     try:
-        if extension == "xlsx":
-            df = convert_xlsx(FILE_PATH)
-        elif extension == "pdf":
-            df = convert_pdf(FILE_PATH)
+        if extension1 == "xlsx":
+            df1 = convert_xlsx(FILE_PATH1, "./data/source1.xlsx")
+        elif extension1 == "pdf":
+            df1 = convert_pdf(FILE_PATH1, "./data/source1.pdf", "./data/source1.csv")
         else:
             exit()
 
+        if extension2 == "xlsx":
+            df2 = convert_xlsx(FILE_PATH2, "./data/source2.xlsx")
+        elif extension2 == "pdf":
+            df2 = convert_pdf(FILE_PATH2, "./data/source2.pdf", "./data/source2.csv")
+        else:
+            exit()
+
+        df = pd.concat([df1, df2])
         df.to_csv('data/patients.csv', index=False, header=True)
         # convert_json(df)
     except Exception:
