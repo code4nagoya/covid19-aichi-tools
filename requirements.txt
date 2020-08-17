@@ -5,3 +5,6 @@ xlrd
 lxml
 pdfminer.six==20200517
 opencv-python==4.3.0.36
+requests
+html5lib
+pytesseract
