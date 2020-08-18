@@ -48,13 +48,30 @@ def recognition(jpg_path):
 
     # ※1 ※2 または (注) で始まる文を抽出
     remarks = re.findall("^(※. .*|\(注\) .*)$", txt, re.M)
-    # 行頭の ※1 ※2 や (注) を削除（空白以降を抽出）
-    remarks = list(map(lambda word:word[word.find(' ')+1:], remarks))
+    
+    def normalize(txt):
+        # 行頭の ※1 ※2 や (注) を削除（空白以降を抽出）
+        txt = txt[txt.find(' ') + 1:]
+        # 空白を除去
+        txt = txt.replace(' ', '')
+        # 画像切れて認識できない「掲載。」を補完
+        txt = re.sub('検査を行ったものについて掲.*$', '検査を行ったものについて掲載。', txt)
+        return txt
+
+    remarks = list(map(normalize, remarks))
 
     # xx人 な箇所を全て抜き出す
-    data = list(map(lambda str:str.replace('人', ''), re.findall("[0-9]+人", txt))) 
-    # dataの先頭から [検査実施人数,陽性患者数,入院,軽症無症状,中等症,重症,入院調整,施設入所,自宅療養,調整,退院,死亡] であると決め打ち
+    data = list(map(lambda str:int(str.replace('人', '')), re.findall("[0-9]+人", txt))) 
+    # dataの先頭から [検査実施人数,陽性患者数,入院,入院_軽症無症状,中等症,重症,入院調整,施設入所,自宅療養,調整,退院,死亡] であると決め打ち
     data = data[0:12]
+
+    # Valiadation
+    # 入院者数の合計列と要素列群値の合計が一致するか？
+    if data[2] != sum(i for i in data[3:6]):
+        raise ValueError("OCR Failed. 入院者数が一致しませんでした。")
+    # 陽性者数の合計列と要素列群値の合計が一致するか？
+    if data[1] != sum(i for i in data[3:]):
+        raise ValueError("OCR Failed. 陽性者数が一致しませんでした。")
 
     return [dt_update, data, remarks]
 
@@ -63,8 +80,15 @@ def to_csv(dt, row, remarks, dir):
 
     with p.open(mode='w') as fw:
         writer = csv.writer(fw)
-        writer.writerow(["更新日時","検査実施人数","陽性患者数","入院","軽症無症状","中等症","重症","入院調整","施設入所","自宅療養","調整","退院","死亡","入院中","軽症中等症","転院","備考"])
-        writer.writerow([dt] + row + ["", "", ""] + ["".join(remarks)])
+        writer.writerow(["更新日時","検査実施人数","陽性患者数","入院","入院_軽症無症状","中等症","重症","入院調整","施設入所","自宅療養","調整","退院","死亡","入院中","軽症無症状","軽症中等症","転院","備考"])
+
+        # 入院中（実際には現在陽性者数）： 入院＋入院調整＋自宅療養＋調整
+        # 軽症無症状: 入院中－中等症－重症
+        # 軽症中等症: null固定
+        # 転院: 0固定
+        patient_num = row[2] + row[6] + row[8] + row[9]
+        inactive_num = patient_num - row[4] - row[5]
+        writer.writerow([dt] + row + [patient_num, inactive_num, "", 0] + ["".join(remarks)])
 
 if __name__ == "__main__":
     url = "https://www.pref.aichi.jp/site/covid19-aichi/"
@@ -81,8 +105,5 @@ if __name__ == "__main__":
     link = urljoin(url, src)
     jpg_path = get_file(link, "./data")
     res = recognition(jpg_path)
-    print(res[0])
-    print(res[1])
-    print(res[2])
 
     to_csv(res[0], res[1], res[2], "./data")

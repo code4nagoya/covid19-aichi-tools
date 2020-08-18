@@ -4,7 +4,8 @@ echo 1.検査陽性者の状況 start
 wget "https://raw.githubusercontent.com/code4nagoya/covid19/master/data/main_summary_history.csv" -O /covid19/data/main_summary_history_master.csv
 wget "https://docs.google.com/spreadsheets/d/1DdluQBSQSiACG1CaIg4K3K-HVeGGThyecRHSA84lL6I/export?format=csv&gid=1019512361" -O /covid19/data/main_summary_history_sheet.csv
 python3 /covid19/scrape_main_summary.py #愛知県HPからOCR
-cp /covid19/data/main_summary_history_sheet.csv /covid19/data/main_summary_history.csv
+python3 /covid19/merge_main_summary.py #CSV群を main_summary_history.csv にマージ
+# cp /covid19/data/main_summary_history_sheet.csv /covid19/data/main_summary_history.csv
 echo 1.検査陽性者の状況 end
 
 echo 2.愛知県内発生事例（感染者一覧） start
