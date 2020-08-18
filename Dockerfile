@@ -1,6 +1,18 @@
 FROM python:3
 
 # setup
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y \
+    tesseract-ocr \
+    libtesseract-dev \
+    tesseract-ocr-jpn \
+    tesseract-ocr-jpn-vert \
+    tesseract-ocr-script-jpan \
+    tesseract-ocr-script-jpan-vert \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN apt-get update
 RUN apt-get -y install locales && \
     localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
