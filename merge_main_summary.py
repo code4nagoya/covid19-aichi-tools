@@ -62,6 +62,6 @@ if __name__ == "__main__":
     # 更新日時の昇順で並び替えてCSV出力
     df_csv = df_csv.sort_values(by=[dt_col], ascending=True)
     # df_csv = df_csv.astype(str)
-    order = ["更新日時","検査実施人数","陽性患者数","入院","入院_軽症無症状","中等症","重症","入院調整","施設入所","自宅療養","調整","退院","死亡","入院中","軽症無症状","軽症中等症","転院","備考"]
+    order = ["更新日時","検査実施人数","陽性患者数","入院","軽症無症状","中等症","重症","入院調整","施設入所","自宅療養","調整","退院","死亡","入院中","軽症中等症","転院","備考"]
     df_csv[order].to_csv("./data/main_summary_history.csv", index=False, header=True)
     print("Wrote to main_summary_history.csv")
