@@ -80,15 +80,16 @@ def to_csv(dt, row, remarks, dir):
 
     with p.open(mode='w') as fw:
         writer = csv.writer(fw)
-        writer.writerow(["更新日時","検査実施人数","陽性患者数","入院","入院_軽症無症状","中等症","重症","入院調整","施設入所","自宅療養","調整","退院","死亡","入院中","軽症無症状","軽症中等症","転院","備考"])
+        writer.writerow(["更新日時","検査実施人数","陽性患者数","入院","軽症無症状","中等症","重症","入院調整","施設入所","自宅療養","調整","退院","死亡","入院中","軽症中等症","転院","備考"])
 
         # 入院中（実際には現在陽性者数）： 入院＋入院調整＋自宅療養＋調整
         # 軽症無症状: 入院中－中等症－重症
         # 軽症中等症: null固定
         # 転院: 0固定
-        patient_num = row[2] + row[6] + row[8] + row[9]
+        # patient_num = row[2] + row[6] + row[8] + row[9]
         inactive_num = patient_num - row[4] - row[5]
-        writer.writerow([dt] + row + [patient_num, inactive_num, "", 0] + ["".join(remarks)])
+        # writer.writerow([dt] + row + [patient_num, inactive_num, "", 0] + ["".join(remarks)])
+        writer.writerow([dt] + row + [inactive_num, "", 0] + ["".join(remarks)])
 
 if __name__ == "__main__":
     url = "https://www.pref.aichi.jp/site/covid19-aichi/"
