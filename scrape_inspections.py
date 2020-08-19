@@ -19,8 +19,8 @@ def convert_table(url):
     # 集計行削除
     df.drop(df.tail(1).index,inplace=True)
     
-    # 月別行を削除（応急処置）
-    df.drop([0, 1, 2, 3, 4],inplace=True)
+    # X月X日（X曜日）の行だけを抽出（月と週の行を除外）
+    df = df.query('検査日.str.match(".*月.*日.*曜日）")', engine='python')
     
     # 属性調整
     df["備考"] = df["検査日"]
