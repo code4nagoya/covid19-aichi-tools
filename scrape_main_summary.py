@@ -39,7 +39,8 @@ def recognition(jpg_path):
 
     # 範囲指定
     img_crop = img[0:550]
-    txt = pytesseract.image_to_string(img_crop, lang="jpn", config="--psm 6").replace(".", "")
+    # ref http://blog.machine-powers.net/2018/08/02/learning-tesseract-command-utility/
+    txt = pytesseract.image_to_string(img_crop, lang="jpn", config="--psm 1").replace(".", "")
     print(txt)
 
     dt_match = re.search("(\d{4})年(\d{1,2})月(\d{1,2})日(\d{1,2})時", txt)    
@@ -86,7 +87,7 @@ def to_csv(dt, row, remarks, dir):
         # 軽症無症状: 入院中－中等症－重症
         # 軽症中等症: null固定
         # 転院: 0固定
-        # patient_num = row[2] + row[6] + row[8] + row[9]
+        patient_num = row[2] + row[6] + row[8] + row[9]
         inactive_num = patient_num - row[4] - row[5]
         # writer.writerow([dt] + row + [patient_num, inactive_num, "", 0] + ["".join(remarks)])
         writer.writerow([dt] + row + [inactive_num, "", 0] + ["".join(remarks)])
