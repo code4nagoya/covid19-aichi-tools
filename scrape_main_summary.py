@@ -35,12 +35,12 @@ def get_file(url, dir="."):
 
 def recognition(jpg_path):
     src = cv2.imread(str(jpg_path))
-    img = cv2.inRange(src, (150, 150, 100), (255, 255, 255))
+    img = cv2.inRange(src, (150, 120, 130), (255, 255, 255))
 
     # 範囲指定
     img_crop = img[0:550]
     # ref http://blog.machine-powers.net/2018/08/02/learning-tesseract-command-utility/
-    txt = pytesseract.image_to_string(img_crop, lang="jpn", config="--psm 11").replace(".", "")
+    txt = pytesseract.image_to_string(img_crop, lang="jpn", config="--psm 3").replace(".", "").replace(",", "")
     print(txt)
 
     dt_match = re.search("(\d{4})年(\d{1,2})月(\d{1,2})日(\d{1,2})時", txt)    
