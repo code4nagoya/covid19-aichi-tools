@@ -40,7 +40,7 @@ def recognition(jpg_path):
     # 範囲指定
     img_crop = img[0:550]
     # ref http://blog.machine-powers.net/2018/08/02/learning-tesseract-command-utility/
-    txt = pytesseract.image_to_string(img_crop, lang="jpn", config="--psm 1").replace(".", "")
+    txt = pytesseract.image_to_string(img_crop, lang="jpn", config="--psm 11").replace(".", "")
     print(txt)
 
     dt_match = re.search("(\d{4})年(\d{1,2})月(\d{1,2})日(\d{1,2})時", txt)    
@@ -62,7 +62,7 @@ def recognition(jpg_path):
     remarks = list(map(normalize, remarks))
 
     # xx人 な箇所を全て抜き出す
-    data = list(map(lambda str:int(str.replace('人', '')), re.findall("[0-9]+人", txt))) 
+    data = list(map(lambda str:int(str.replace('人', '')), re.findall("[0-9]+人", txt.replace(',', ''))))
     # dataの先頭から [検査実施人数,陽性患者数,入院,入院_軽症無症状,中等症,重症,入院調整,施設入所,自宅療養,調整,退院,死亡] であると決め打ち
     data = data[0:12]
 
