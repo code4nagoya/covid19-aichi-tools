@@ -92,7 +92,7 @@ def to_csv(dt, row, remarks, dir):
         # 軽症無症状(全体): 現在陽性者数－中等症－重症
         row[3] = patient_num - row[4] - row[5]
         # writer.writerow([dt] + row + [patient_num, inactive_num, "", 0] + ["".join(remarks)])
-        writer.writerow([dt] + row + ["", "", 0] + ["".join(remarks)])
+        writer.writerow([dt] + row + ["", "", ""] + ["".join(remarks)])
 
 if __name__ == "__main__":
     url = "https://www.pref.aichi.jp/site/covid19-aichi/"
