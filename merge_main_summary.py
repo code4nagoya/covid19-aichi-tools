@@ -30,7 +30,10 @@ if __name__ == "__main__":
 
     # 更新日時列 → 更新日列 の生成
     def update_at_ymd(x):
-        return x[dt_col][:x[dt_col].find(' ')]
+        hit = x[dt_col].find(' ')
+        if hit < 0:
+            return x[dt_col]
+        return x[dt_col][:hit]
 
     # 前回CSV読み込み
     df_master = pd.read_csv("./data/main_summary_history_master.csv", dtype=str)
