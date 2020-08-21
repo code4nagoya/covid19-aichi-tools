@@ -38,6 +38,7 @@ if __name__ == "__main__":
     # 前回CSV読み込み
     df_master = pd.read_csv("./data/main_summary_history_master.csv", dtype=str)
     df_master[date_col] = df_master.apply(update_at_ymd, axis=1) # 更新日列追加
+    df_master = df_master.drop_duplicates(subset=date_col) # 更新日で重複除去
     
     # OCR結果CSV読み込み
     ocr_path = "./data/main_summary_recognized.csv"
