@@ -141,8 +141,8 @@ if __name__ == "__main__":
 
     print("注記データを抽出")
     hit_remarks_pattern, remarks = recognize_remarks_patterns([
-        (lambda path: remarks_pattern1.recognize(path)),
         (lambda path: remarks_pattern2.recognize(path)),
+        (lambda path: remarks_pattern1.recognize(path)),
     ])
 
     if remarks is None:
