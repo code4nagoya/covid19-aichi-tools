@@ -46,8 +46,8 @@ if __name__ == "__main__":
         df_recog = pd.read_csv(ocr_path, dtype=str)
         df_recog[date_col] = df_recog.apply(update_at_ymd, axis=1) # 更新日列追加
 
-        # 前回CSVとOCR結果CSVをマージ(同一更新日はOCR結果CSVを採用)
-        df_merged = df_recog.set_index(date_col).combine_first(df_master.set_index(date_col))
+        # 前回CSVとOCR結果CSVをマージ(同一更新日は前回CSVを採用、つまり新規日のみOCR結果を採用)
+        df_merged = df_master.set_index(date_col).combine_first(df_recog.set_index(date_col))
         df_merged[date_col] = df_merged.apply(update_at_ymd, axis=1) # 更新日列追加
         print("Merged main_summary_history_master.csv to main_summary_recognized.csv")
 
