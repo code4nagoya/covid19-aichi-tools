@@ -28,7 +28,7 @@ def recognize(jpg_path):
     print(txt)
 
     # 年月日時を抽出
-    dt_match = re.search("(\d{4}).(\d{1,2}).(\d{1,2}).(\d{1,2}).", txt)    
+    dt_match = re.search("(\d{4}).*年(\d{1,2}).*月(\d{1,2}).*日(\d{1,2}).*", txt)    
     if len(dt_match.groups()) == 4:
         y, m, d, h = map(int, dt_match.groups())
         dt_update = datetime.datetime(y, m, d, h).strftime("%Y/%m/%d %H:00")
@@ -36,7 +36,7 @@ def recognize(jpg_path):
         return dt_update
 
     # 年月日だけでも抽出
-    dt_match = re.search("(\d{4}).(\d{1,2}).(\d{1,2})", txt)
+    dt_match = re.search("(\d{4}).*年(\d{1,2}).*月(\d{1,2})", txt)
     if len(dt_match.groups()) == 3:
         y, m, d = map(int, dt_match.groups())
         dt_update = datetime.datetime(y, m, d, h).strftime("%Y/%m/%d %0:00")

@@ -15,7 +15,7 @@ def recognize(jpg_path):
     # 画像の上25%でカット
     src = src[0:int(hei * 0.25)]
     totalArea = wid * int(hei / 4)
-    cv2.imwrite('table_ptn1_1_cropped.jpg', src)
+    # cv2.imwrite('table_ptn1_1_cropped.jpg', src)
 
     # 画像内の矩形を抽出
     # https://stackoverflow.com/a/60068297
@@ -53,14 +53,14 @@ def recognize(jpg_path):
 
     # 面積最大の矩形内を抽出（ついでに枠線を消すために 3pixel オフセット）
     src = src[maxY+int((maxH/4)*3):maxY+maxH, maxX+3:maxX+maxW-6]
-    cv2.imwrite('table_ptn1_2_rected.jpg', src)
+    # cv2.imwrite('table_ptn1_2_rected.jpg', src)
 
     # 拡大と白黒化
     height = src.shape[0]
     width = src.shape[1]
     tmp = cv2.resize(src, (int(width * 2), int(height * 2)))
     img = cv2.inRange(tmp, (145, 125, 110), (255, 255, 255))
-    cv2.imwrite('table_ptn1_3_resized.jpg', img)
+    # cv2.imwrite('table_ptn1_3_resized.jpg', img)
 
     # 範囲指定
     # ref http://blog.machine-powers.net/2018/08/02/learning-tesseract-command-utility/

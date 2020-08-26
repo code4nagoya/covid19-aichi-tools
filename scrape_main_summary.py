@@ -11,15 +11,16 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
-try:
-    from PIL import Image
-except ImportError:
-    import Image
-    
 import pytesseract
 import cv2
 import datetime
 import csv
+
+import recognize_main_summary_date_1 as date_pattern1
+import recognize_main_summary_table_1 as table_pattern1
+import recognize_main_summary_table_2 as table_pattern2
+import recognize_main_summary_remarks_1 as remarks_pattern1
+import recognize_main_summary_remarks_2 as remarks_pattern2
 
 def get_file(url, dir="."):
 
@@ -33,48 +34,65 @@ def get_file(url, dir="."):
 
     return p
 
-def recognition(jpg_path):
-    src = cv2.imread(str(jpg_path))
-    img = cv2.inRange(src, (150, 120, 130), (255, 255, 255))
+def recognize_date_patterns(reconize_funcs):
+    pattern = 0
+    for reconize_date in reconize_funcs:
+        try:
+            pattern = pattern + 1
+            print("Pattern" + str(pattern) + " Start")
+            data = reconize_date(jpg_path)
 
-    # 範囲指定
-    img_crop = img[0:550]
-    # ref http://blog.machine-powers.net/2018/08/02/learning-tesseract-command-utility/
-    txt = pytesseract.image_to_string(img_crop, lang="jpn", config="--psm 3").replace(".", "").replace(",", "")
-    print(txt)
+            return pattern, data
 
-    dt_match = re.search("(\d{4})年(\d{1,2})月(\d{1,2})日(\d{1,2})時", txt)    
-    y, m, d, h = map(int, dt_match.groups())
-    dt_update = datetime.datetime(y, m, d, h).strftime("%Y/%m/%d %H:00")
+        except Exception as e:
+            print(e)
 
-    # ※1 ※2 または (注) で始まる文を抽出
-    remarks = re.findall("^(※. .*|\(注\) .*)$", txt, re.M)
-    
-    def normalize(txt):
-        # 行頭の ※1 ※2 や (注) を削除（空白以降を抽出）
-        txt = txt[txt.find(' ') + 1:]
-        # 空白を除去
-        txt = txt.replace(' ', '')
-        # 画像切れて認識できない「掲載。」を補完
-        txt = re.sub('検査を行ったものについて掲.*$', '検査を行ったものについて掲載。', txt)
-        return txt
+    return None
 
-    remarks = list(map(normalize, remarks))
+def recognize_remarks_patterns(reconize_funcs):
+    pattern = 0
+    for reconize_remarks in reconize_funcs:
+        try:
+            pattern = pattern + 1
+            print("Pattern" + str(pattern) + " Start")
+            data = reconize_remarks(jpg_path)
 
-    # xx人 な箇所を全て抜き出す
-    data = list(map(lambda str:int(str.replace('人', '')), re.findall("[0-9]+人", txt.replace(',', ''))))
-    # dataの先頭から [検査実施人数,陽性患者数,入院,入院_軽症無症状,中等症,重症,入院調整,施設入所,自宅療養,調整,退院,死亡] であると決め打ち
-    data = data[0:12]
+            # Validation
+            if len(data) <= 0:
+                raise ValueError("OCR Failed. 注記が取得できませんでした。")
 
-    # Valiadation
-    # 入院者数の合計列と要素列群値の合計が一致するか？
-    if data[2] != sum(i for i in data[3:6]):
-        raise ValueError("OCR Failed. 入院者数が一致しませんでした。")
-    # 陽性者数の合計列と要素列群値の合計が一致するか？
-    if data[1] != sum(i for i in data[3:]):
-        raise ValueError("OCR Failed. 陽性者数が一致しませんでした。")
+            return pattern, data
 
-    return [dt_update, data, remarks]
+        except Exception as e:
+            print(e)
+
+    return None
+
+def recognize_table_patterns(reconize_funcs):
+    pattern = 0
+    for reconize_table in reconize_funcs:
+        try:
+            pattern = pattern + 1
+            print("Pattern" + str(pattern) + " Start")
+            row = reconize_table(jpg_path)
+
+            # dataの先頭から [検査実施人数,陽性患者数,入院,入院_軽症無症状,中等症,重症,入院調整,施設入所,自宅療養,調整,退院,死亡] であると決め打ち
+            data = row[0:12]
+
+            # Valiadation
+            # 入院者数の合計列と要素列群値の合計が一致するか？
+            if data[2] != sum(i for i in data[3:6]):
+                raise ValueError("OCR Failed. 入院者数が一致しませんでした。")
+            # 陽性者数の合計列と要素列群値の合計が一致するか？
+            if data[1] != sum(i for i in data[3:]):
+                raise ValueError("OCR Failed. 陽性者数が一致しませんでした。")
+
+            return pattern, data
+
+        except Exception as e:
+            print(e)
+
+    return None
 
 def to_csv(dt, row, remarks, dir):
     p = pathlib.Path(dir, 'main_summary_recognized.csv')
@@ -82,16 +100,6 @@ def to_csv(dt, row, remarks, dir):
     with p.open(mode='w') as fw:
         writer = csv.writer(fw)
         writer.writerow(["更新日時","検査実施人数","陽性患者数","入院","軽症無症状","中等症","重症","入院調整","施設入所","自宅療養","調整","退院","死亡","入院中","軽症中等症","転院","備考"])
-
-        # 現在陽性者数： 入院＋入院調整＋自宅療養＋調整
-        # 軽症無症状(入院中のみ): 入院中－中等症－重症
-        # 軽症中等症: null固定
-        # 転院: 0固定
-        patient_num = row[2] + row[6] + row[8] + row[9]
-        inactive_num = patient_num - row[4] - row[5]
-        # 軽症無症状(全体): 現在陽性者数－中等症－重症
-        row[3] = patient_num - row[4] - row[5]
-        # writer.writerow([dt] + row + [patient_num, inactive_num, "", 0] + ["".join(remarks)])
         writer.writerow([dt] + row + ["", "", ""] + ["".join(remarks)])
 
 if __name__ == "__main__":
@@ -108,6 +116,39 @@ if __name__ == "__main__":
     src = soup.find("img", alt=re.compile("検査陽性者$")).get("src")
     link = urljoin(url, src)
     jpg_path = get_file(link, "./data")
-    res = recognition(jpg_path)
+    # jpg_path = "./data/main_summary.jpg"
 
-    to_csv(res[0], res[1], res[2], "./data")
+    print("更新日を抽出")
+    hit_date_pattern, date = recognize_date_patterns([
+        (lambda path: date_pattern1.recognize(path)),
+    ])
+
+    if date is None:
+        raise ValueError("OCR Failed. 更新日を抽出できませんでした。")
+    print("更新日を抽出 -> Pattern" + str(hit_date_pattern) + "で成功")
+
+
+    print("数値データを抽出")
+    hit_table_pattern, nums = recognize_table_patterns([
+        (lambda path: table_pattern1.recognize(path)),
+        (lambda path: table_pattern2.recognize(path)),
+    ])
+
+    if nums is None:
+        raise ValueError("OCR Failed. 表から数値データを抽出できませんでした。")
+    print("数値データを抽出 -> Pattern" + str(hit_table_pattern) + "で成功")
+
+
+    print("注記データを抽出")
+    hit_remarks_pattern, remarks = recognize_remarks_patterns([
+        (lambda path: remarks_pattern1.recognize(path)),
+        (lambda path: remarks_pattern2.recognize(path)),
+    ])
+
+    if remarks is None:
+        raise ValueError("OCR Failed. 注記データを抽出できませんでした。")
+    print("注記データを抽出 -> Pattern" + str(hit_remarks_pattern) + "で成功")
+
+
+    to_csv(date, nums, remarks, "./data")
+    print("Wrote to main_summary_recognized.csv")
