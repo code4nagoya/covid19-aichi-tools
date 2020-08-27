@@ -19,6 +19,7 @@ import csv
 import recognize_main_summary_date_1 as date_pattern1
 import recognize_main_summary_table_1 as table_pattern1
 import recognize_main_summary_table_2 as table_pattern2
+import recognize_main_summary_table_3 as table_pattern3
 import recognize_main_summary_remarks_1 as remarks_pattern1
 import recognize_main_summary_remarks_2 as remarks_pattern2
 
@@ -116,7 +117,7 @@ if __name__ == "__main__":
     src = soup.find("img", alt=re.compile("検査陽性者$")).get("src")
     link = urljoin(url, src)
     jpg_path = get_file(link, "./data")
-    # jpg_path = "./data/main_summary.jpg"
+    # jpg_path = "./data/main_summary0826.jpg"
 
     print("更新日を抽出")
     hit_date_pattern, date = recognize_date_patterns([
@@ -132,6 +133,7 @@ if __name__ == "__main__":
     hit_table_pattern, nums = recognize_table_patterns([
         (lambda path: table_pattern1.recognize(path)),
         (lambda path: table_pattern2.recognize(path)),
+        (lambda path: table_pattern3.recognize(path)),
     ])
 
     if nums is None:
@@ -142,7 +144,7 @@ if __name__ == "__main__":
     print("注記データを抽出")
     hit_remarks_pattern, remarks = recognize_remarks_patterns([
         (lambda path: remarks_pattern2.recognize(path)),
-        (lambda path: remarks_pattern1.recognize(path)),
+        # (lambda path: remarks_pattern1.recognize(path)),
     ])
 
     if remarks is None:
@@ -150,5 +152,8 @@ if __name__ == "__main__":
     print("注記データを抽出 -> Pattern" + str(hit_remarks_pattern) + "で成功")
 
 
+    print("更新日時", date)
+    print("数値群", nums)
+    print("注記", remarks)
     to_csv(date, nums, remarks, "./data")
     print("Wrote to main_summary_recognized.csv")

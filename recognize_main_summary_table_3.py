@@ -6,19 +6,16 @@ import re
 
 import pytesseract
 import cv2
+import numpy as np
 
-def recognize(jpg_path):
-    src = cv2.imread(str(jpg_path))
+# 画像内の矩形を抽出
+# https://stackoverflow.com/a/60068297
+def cropTable(src):
+
     hei = src.shape[0]
     wid = src.shape[1]
+    totalArea = wid * hei
 
-    # 画像の上25%でカット
-    src = src[0:int(hei * 0.25)]
-    totalArea = wid * int(hei / 4)
-    # cv2.imwrite('table_ptn2_1_cropped.jpg', src)
-
-    # 画像内の矩形を抽出
-    # https://stackoverflow.com/a/60068297
     original = src.copy()
     gray = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
     thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
@@ -52,15 +49,49 @@ def recognize(jpg_path):
         ROI_number += 1
 
     # 面積最大の矩形内を抽出（ついでに枠線を消すために 3pixel オフセット）
-    src = src[maxY+int((maxH/4)*3):maxY+maxH, maxX+3:maxX+maxW-6]
-    # cv2.imwrite('table_ptn2_2_rected.jpg', src)
+    img = original[maxY+int((maxH/4)*3):maxY+maxH, maxX+3:maxX+maxW-6]
+    return img
 
-    # 拡大と白黒化
+# 拡大と白黒化
+def grayAndResize(src):
+    neiborhood24 = np.array(
+        [
+            [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1],
+        ],
+        np.uint8,
+    )
+
     height = src.shape[0]
     width = src.shape[1]
-    tmp = cv2.resize(src, (int(width * 2), int(height * 2)))
-    img = cv2.inRange(tmp, (145, 125, 110), (255, 255, 255))
-    # cv2.imwrite('table_ptn2_3_resized.jpg', img)
+
+    dilated = cv2.dilate(src, neiborhood24, iterations=1)
+    diff = cv2.absdiff(dilated, src)
+    contour = 255 - diff
+
+    gray2 = cv2.resize(contour, (int(width * 2), int(height * 2)))
+    th, img = cv2.threshold(gray2, 180, 255, cv2.THRESH_BINARY)
+    return img
+
+def recognize(jpg_path):
+    src = cv2.imread(str(jpg_path))
+    hei = src.shape[0]
+    wid = src.shape[1]
+
+    # 画像の上25%でカット
+    img = src[0:int(hei * 0.25)]
+    # cv2.imwrite('table_ptn3_1_cropped.jpg', img)
+
+    # 画像内の矩形を抽出
+    img = cropTable(img)
+    # cv2.imwrite('table_ptn3_2_rected.jpg', img)
+
+    # 拡大と白黒化
+    img = grayAndResize(img)
+    # cv2.imwrite('table_ptn3_3_resized.jpg', img)
 
     # 範囲指定
     # ref http://blog.machine-powers.net/2018/08/02/learning-tesseract-command-utility/
@@ -68,5 +99,5 @@ def recognize(jpg_path):
     print(txt)
 
     # xx人 な箇所を全て抜き出す
-    data = list(map(lambda str:int(str.replace('人', '')), re.findall("[0-9]+人", txt.replace(',', ''))))
+    data = list(map(lambda str:int(str.replace('人', '')), re.findall("[0-9]+", txt)))
     return data
