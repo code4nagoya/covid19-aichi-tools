@@ -27,19 +27,30 @@ def recognize(jpg_path):
     txt = pytesseract.image_to_string(img, lang="jpn", config="--psm 11").replace(".", "").replace(",", "")
     print(txt)
 
-    # 年月日時を抽出
+    # 年月日時を抽出1
     dt_match = re.search("(\d{4}).*年(\d{1,2}).*月(\d{1,2}).*日(\d{1,2}).*", txt)    
-    if len(dt_match.groups()) == 4:
+    print(dt_match)
+    if dt_match is not None and len(dt_match.groups()) == 4:
+        y, m, d, h = map(int, dt_match.groups())
+        dt_update = datetime.datetime(y, m, d, h).strftime("%Y/%m/%d %H:00")
+        print(dt_update)
+        return dt_update
+
+    # 年月日時を抽出2
+    dt_match = re.search("(\d{4}).*?(\d{1,2}).*?(\d{1,2}).*?(\d{1,2}).*", txt)    
+    print(dt_match.groups())
+    if dt_match is not None and len(dt_match.groups()) == 4:
         y, m, d, h = map(int, dt_match.groups())
         dt_update = datetime.datetime(y, m, d, h).strftime("%Y/%m/%d %H:00")
         print(dt_update)
         return dt_update
 
     # 年月日だけでも抽出
-    dt_match = re.search("(\d{4}).*年(\d{1,2}).*月(\d{1,2})", txt)
-    if len(dt_match.groups()) == 3:
+    dt_match = re.search("(\d{4}).*年(\d{1,2}).*月(\d{1,2}).*", txt)
+    print(txt)
+    if dt_match is not None and len(dt_match.groups()) == 3:
         y, m, d = map(int, dt_match.groups())
-        dt_update = datetime.datetime(y, m, d, h).strftime("%Y/%m/%d %0:00")
+        dt_update = datetime.datetime(y, m, d, 0).strftime("%Y/%m/%d %0:00")
         print(dt_update)
         return dt_update
 
