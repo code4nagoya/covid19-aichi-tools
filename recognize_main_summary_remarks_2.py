@@ -11,8 +11,8 @@ def recognize(jpg_path):
     hei = src.shape[0]
     wid = src.shape[1]
 
-    # 画像の上25%～50%でカット
-    src = src[int(hei * 0.25):int(hei * 0.5)]
+    # 画像の上25%～40%でカット
+    src = src[int(hei * 0.25):int(hei * 0.4)]
     # cv2.imwrite('remarks_ptn2_1_cropped.jpg', src)
 
     # 拡大と白黒化
