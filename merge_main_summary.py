@@ -4,21 +4,21 @@
 https://github.com/imabari/covid19-data/blob/master/aichi/aichi_ocr.ipynb
 '''
 
-import pathlib
-import re
+# import pathlib
+# import re
 
-import requests
-from bs4 import BeautifulSoup
-from urllib.parse import urljoin
+# import requests
+# from bs4 import BeautifulSoup
+# from urllib.parse import urljoin
 
-try:
-    from PIL import Image
-except ImportError:
-    import Image
+# try:
+#     from PIL import Image
+# except ImportError:
+#     import Image
     
-import pytesseract
-import cv2
-import datetime
+# import pytesseract
+# import cv2
+# import datetime
 import os
 import csv
 import pandas as pd
@@ -47,7 +47,13 @@ if __name__ == "__main__":
         df_recog[date_col] = df_recog.apply(update_at_ymd, axis=1) # 更新日列追加
 
         # 前回CSVとOCR結果CSVをマージ(同一更新日は前回CSVを採用、つまり新規日のみOCR結果を採用)
-        df_merged = df_master.set_index(date_col).combine_first(df_recog.set_index(date_col))
+        df_master.set_index(date_col, inplace=True)
+        df_recog.set_index(date_col, inplace=True)
+        df_merged = pd.concat([df_recog, df_master])
+        df_merged = df_merged.loc[~df_merged.index.duplicated(keep='last')]
+
+
+        # df_merged = df_master.set_index(date_col).combine_first(df_recog.set_index(date_col))
         df_merged[date_col] = df_merged.apply(update_at_ymd, axis=1) # 更新日列追加
         print("Merged main_summary_history_master.csv to main_summary_recognized.csv")
 
@@ -60,7 +66,10 @@ if __name__ == "__main__":
     df_sheet[date_col] = df_sheet.apply(update_at_ymd, axis=1) # 更新日列追加
 
     # さらにGoogleスプレッドシートCSVをマージ(同一更新日はGoogleスプレッドシートCSVを採用)
-    df_csv = df_sheet.set_index(date_col).combine_first(df_merged.set_index(date_col))
+    df_sheet.set_index(date_col, inplace=True)
+    df_merged.set_index(date_col, inplace=True)
+    df_csv = pd.concat([df_merged, df_sheet])
+    df_csv = df_csv.loc[~df_csv.index.duplicated(keep='last')]
     print("Merged to main_summary_history_sheet.csv")
 
     # 更新日時の昇順で並び替えてCSV出力
@@ -69,3 +78,4 @@ if __name__ == "__main__":
     order = ["更新日時","検査実施人数","陽性患者数","入院","軽症無症状","中等症","重症","入院調整","施設入所","自宅療養","調整","退院","死亡","入院中","軽症中等症","転院","備考"]
     df_csv[order].to_csv("./data/main_summary_history.csv", index=False, header=True)
     print("Wrote to main_summary_history.csv")
+
