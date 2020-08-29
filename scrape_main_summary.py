@@ -17,6 +17,7 @@ import datetime
 import csv
 
 import recognize_main_summary_date_1 as date_pattern1
+import recognize_main_summary_date_2 as date_pattern2
 import recognize_main_summary_table_1 as table_pattern1
 import recognize_main_summary_table_2 as table_pattern2
 import recognize_main_summary_table_3 as table_pattern3
@@ -122,6 +123,7 @@ if __name__ == "__main__":
     print("更新日を抽出")
     hit_date_pattern, date = recognize_date_patterns([
         (lambda path: date_pattern1.recognize(path)),
+        (lambda path: date_pattern2.recognize(path)),
     ])
 
     if date is None:
