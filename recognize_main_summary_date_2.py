@@ -36,8 +36,8 @@ def recognize(jpg_path):
     hei = src.shape[0]
     wid = src.shape[1]
 
-    # 画像の上5%、右60% でカット（日付のところだけ）
-    img = src[0:int(hei * 0.05), int(wid * 0.6):wid]
+    # 画像の上10%、右60% でカット（日付のところだけ）
+    img = src[0:int(hei * 0.1), int(wid * 0.6):wid]
     # cv2.imwrite('date_ptn2_1_date_cropped.jpg', img)
 
     # 拡大と白黒化
