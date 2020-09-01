@@ -13,10 +13,10 @@ echo 2.愛知県内発生事例（感染者一覧） start
 python3 /covid19/scrape_patients.py #愛知県HPからスクレイピング
 echo 2.愛知県内発生事例（感染者一覧） end
 
-echo 3.検査件数 start
-# wget "https://docs.google.com/spreadsheets/d/1ivROd_s3AmvY480XKEZR_COAlx08gOGxZYRYubxghP0/export?format=csv&gid=0" -O /covid19/data/inspections_summary.csv
-python3 /covid19/scrape_inspections.py #愛知県HPからスクレイピング
-echo 3.検査件数 end
+echo 3.検査件数（Google スプレッドシート） start
+wget "https://docs.google.com/spreadsheets/d/1ivROd_s3AmvY480XKEZR_COAlx08gOGxZYRYubxghP0/export?format=csv&gid=0" -O /covid19/data/inspections_summary.csv
+# python3 /covid19/scrape_inspections.py #愛知県HPからスクレイピング
+echo 3.検査件数（Google スプレッドシート） end
 
 echo 4.検査人数 start
 wget "https://docs.google.com/spreadsheets/d/1-w8rowCmCG7lmuo5c0jQ0Dh2Frl4hOmpVrZ2IH9sPpg/export?format=csv&gid=0" -O /covid19/data/inspection_persons_summary.csv
