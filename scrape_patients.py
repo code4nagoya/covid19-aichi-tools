@@ -125,6 +125,7 @@ def exceltime2datetime(et):
 if __name__ == "__main__":
     FILE_PATH1, extension1 = findpath("/site/covid19-aichi/", "7月")
     FILE_PATH2, extension2 = findpath("/site/covid19-aichi/", "8月")
+    FILE_PATH3, extension3 = findpath("/site/covid19-aichi/", "9月")
     try:
         if extension1 == "xlsx":
             df1 = convert_xlsx(FILE_PATH1, "./data/source1.xlsx")
@@ -140,7 +141,14 @@ if __name__ == "__main__":
         else:
             exit()
 
-        df = pd.concat([df1, df2])
+        if extension3 == "xlsx":
+            df3 = convert_xlsx(FILE_PATH3, "./data/source3.xlsx")
+        elif extension3 == "pdf":
+            df3 = convert_pdf(FILE_PATH3, "./data/source3.pdf", "./data/source3.csv")
+        else:
+            exit()
+
+        df = pd.concat([df1, df2, df3])
         df.to_csv('data/patients.csv', index=False, header=True)
         # convert_json(df)
     except Exception:
