@@ -123,17 +123,10 @@ def exceltime2datetime(et):
     return pd.to_datetime('1900/1/1') + days
 
 if __name__ == "__main__":
-    FILE_PATH1, extension1 = findpath("/site/covid19-aichi/", "7月")
     FILE_PATH2, extension2 = findpath("/site/covid19-aichi/", "8月")
     FILE_PATH3, extension3 = findpath("/site/covid19-aichi/", "9月")
     try:
-        if extension1 == "xlsx":
-            df1 = convert_xlsx(FILE_PATH1, "./data/source1.xlsx")
-        elif extension1 == "pdf":
-            df1 = convert_pdf(FILE_PATH1, "./data/source1.pdf", "./data/source1.csv")
-        else:
-            exit()
-
+        
         if extension2 == "xlsx":
             df2 = convert_xlsx(FILE_PATH2, "./data/source2.xlsx")
         elif extension2 == "pdf":
@@ -148,7 +141,7 @@ if __name__ == "__main__":
         else:
             exit()
 
-        df = pd.concat([df1, df2, df3])
+        df = pd.concat([df2, df3])
         df.to_csv('data/patients.csv', index=False, header=True)
         # convert_json(df)
     except Exception:
