@@ -123,8 +123,8 @@ def exceltime2datetime(et):
     return pd.to_datetime('1900/1/1') + days
 
 if __name__ == "__main__":
-    FILE_PATH2, extension2 = findpath("/site/covid19-aichi/", "8月")
-    FILE_PATH3, extension3 = findpath("/site/covid19-aichi/", "9月")
+    FILE_PATH2, extension2 = findpath("/site/covid19-aichi/", "9月")
+    FILE_PATH3, extension3 = findpath("/site/covid19-aichi/", "10月")
     try:
         
         if extension2 == "xlsx":
