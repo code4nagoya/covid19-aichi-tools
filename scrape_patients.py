@@ -72,8 +72,15 @@ def convert_pdf(FILE_PATH, pdf_path, csv_path):
         pdf_path, pages="1-end", split_text=True,
         strip_text="\n", line_scale=40)
 
-    # csvに保存
     df_csv = pd.concat([table.df for table in tables])
+
+    # 2行目以降の(各頁に挿入される)ヘッダ行を除去
+    df_csv_header = df_csv[:1]
+    df_csv_body = df_csv[2:]
+    df_csv_body = df_csv_body[df_csv_body[0].str.isnumeric()] # No列が数値の行を抽出
+    df_csv = pd.concat([df_csv_header, df_csv_body])
+    
+    # csvに保存
     df_csv.to_csv(csv_path, index=False, header=False)
     df = pd.read_csv(csv_path, parse_dates=["発表日"], date_parser=my_parser)
     df = add_date(df).fillna("")
