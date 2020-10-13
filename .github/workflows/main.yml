@@ -4,8 +4,8 @@ on :
     branches:
       - master
   schedule :
-    - cron : '0 1,4,9 * * *' #UTC
-#    - cron : '0 10,13,18 * * *' JST
+    - cron : '0 1 * * *' #UTC
+#    - cron : '0 10 * * *' JST
 
 jobs:
   build:
