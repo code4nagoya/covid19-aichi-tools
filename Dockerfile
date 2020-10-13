@@ -4,6 +4,7 @@ FROM python:3
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y \
+    libgl1-mesa-glx \
     tesseract-ocr \
     libtesseract-dev \
     tesseract-ocr-jpn \
