@@ -130,27 +130,36 @@ def exceltime2datetime(et):
     return pd.to_datetime('1900/1/1') + days
 
 if __name__ == "__main__":
-    FILE_PATH2, extension2 = findpath("/site/covid19-aichi/", "9月")
-    FILE_PATH3, extension3 = findpath("/site/covid19-aichi/", "10月")
+
+    months = ["8月", "9月", "10月", "11月", "12月"]
+
+    i = 0
+    dfs = []
+    for month in months:
+        try:
+            i = i + 1
+            path, ext = findpath("/site/covid19-aichi/", month)
+            
+            if ext == "xlsx":
+                df = convert_xlsx(path, "./data/source" + str(i) + "." + ext)
+            elif ext == "pdf":
+                df = convert_pdf(path, "./data/source" + str(i) + "." + ext, "./data/source" + str(i) + ".csv")
+            else:
+                continue
+
+            dfs.append(df)
+
+        except Exception:
+            print(month + " is not found.")
+            continue
+
+    if len(dfs) == 0:
+        print("No patients pdf/xlsx.")
+        exit()
+
     try:
-        
-        if extension2 == "xlsx":
-            df2 = convert_xlsx(FILE_PATH2, "./data/source2.xlsx")
-        elif extension2 == "pdf":
-            df2 = convert_pdf(FILE_PATH2, "./data/source2.pdf", "./data/source2.csv")
-        else:
-            exit()
-
-        if extension3 == "xlsx":
-            df3 = convert_xlsx(FILE_PATH3, "./data/source3.xlsx")
-        elif extension3 == "pdf":
-            df3 = convert_pdf(FILE_PATH3, "./data/source3.pdf", "./data/source3.csv")
-        else:
-            exit()
-
-        df = pd.concat([df2, df3])
+        df = pd.concat(dfs)
         df.to_csv('data/patients.csv', index=False, header=True)
-        # convert_json(df)
     except Exception:
         print("===================")
         traceback.print_exc()
