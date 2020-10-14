@@ -76,7 +76,7 @@ def convert_pdf(FILE_PATH, pdf_path, csv_path):
 
     # 2行目以降の(各頁に挿入される)ヘッダ行を除去
     df_csv_header = df_csv[:1]
-    df_csv_body = df_csv[2:]
+    df_csv_body = df_csv[1:]
     df_csv_body = df_csv_body[df_csv_body[0].str.isnumeric()] # No列が数値の行を抽出
     df_csv = pd.concat([df_csv_header, df_csv_body])
     
