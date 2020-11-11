@@ -78,6 +78,7 @@ def convert_pdf(FILE_PATH, pdf_path, csv_path):
     df_csv_header = df_csv[:1]
     df_csv_body = df_csv[1:]
     df_csv_body = df_csv_body[df_csv_body[0].str.isnumeric()] # No列が数値の行を抽出
+    df_csv_body = df_csv_body[df_csv_body[1].str.match(".*月.*日")] # 発表日列が○月○日を行を抽出(欠番を除去)
     df_csv = pd.concat([df_csv_header, df_csv_body])
     
     # csvに保存
