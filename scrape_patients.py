@@ -48,6 +48,8 @@ def findpath(url, searchWord):
     page_url = base_url + url
     raw_html = urllib.request.urlopen(page_url)
     soup = BeautifulSoup(raw_html, "html.parser")
+    table_link = ""
+    ext = ""
     for aa in soup.find_all("a"):
         link = aa.get("href")
         name = aa.get_text()
@@ -137,22 +139,18 @@ if __name__ == "__main__":
     i = 0
     dfs = []
     for month in months:
-        try:
-            i = i + 1
-            path, ext = findpath("/site/covid19-aichi/", month)
-            
-            if ext == "xlsx":
-                df = convert_xlsx(path, "./data/source" + str(i) + "." + ext)
-            elif ext == "pdf":
-                df = convert_pdf(path, "./data/source" + str(i) + "." + ext, "./data/source" + str(i) + ".csv")
-            else:
-                continue
-
-            dfs.append(df)
-
-        except Exception:
+        i = i + 1
+        path, ext = findpath("/site/covid19-aichi/", month)
+        
+        if ext == "xlsx":
+            df = convert_xlsx(path, "./data/source" + str(i) + "." + ext)
+        elif ext == "pdf":
+            df = convert_pdf(path, "./data/source" + str(i) + "." + ext, "./data/source" + str(i) + ".csv")
+        else:
             print(month + " is not found.")
             continue
+
+        dfs.append(df)
 
     if len(dfs) == 0:
         print("No patients pdf/xlsx.")
