@@ -27,31 +27,38 @@ def recognize(jpg_path):
     txt = pytesseract.image_to_string(img, lang="jpn", config="--psm 11").replace(".", "").replace(",", "")
     print(txt)
 
+    # 取得した日付が 5日前～現在 の間だったら有効とする
+    rangeEnd = datetime.now()
+    rangeStart = rangeEnd - datetime.timedelta(days=5)
+
     # 年月日時を抽出1
     dt_match = re.search("(\d{4}).*年(\d{1,2}).*月(\d{1,2}).*日(\d{1,2}).*", txt)    
     print(dt_match)
     if dt_match is not None and len(dt_match.groups()) == 4:
         y, m, d, h = map(int, dt_match.groups())
-        dt_update = datetime.datetime(y, m, d, h).strftime("%Y/%m/%d %H:00")
+        dt_update = datetime.datetime(y, m, d, h)
         print(dt_update)
-        return dt_update
+        if rangeEnd < dt_update & dt_update < rangeEnd:
+            return dt_update.strftime("%Y/%m/%d %H:00")
 
     # 年月日時を抽出2
     dt_match = re.search("(\d{4}).*?(\d{1,2}).*?(\d{1,2}).*?(\d{1,2}).*", txt)    
     print(dt_match.groups())
     if dt_match is not None and len(dt_match.groups()) == 4:
         y, m, d, h = map(int, dt_match.groups())
-        dt_update = datetime.datetime(y, m, d, h).strftime("%Y/%m/%d %H:00")
+        dt_update = datetime.datetime(y, m, d, h)
         print(dt_update)
-        return dt_update
+        if rangeEnd < dt_update & dt_update < rangeEnd:
+            return dt_update.strftime("%Y/%m/%d %H:00")
 
     # 年月日だけでも抽出
     dt_match = re.search("(\d{4}).*年(\d{1,2}).*月(\d{1,2}).*", txt)
     print(txt)
     if dt_match is not None and len(dt_match.groups()) == 3:
         y, m, d = map(int, dt_match.groups())
-        dt_update = datetime.datetime(y, m, d, 0).strftime("%Y/%m/%d %0:00")
+        dt_update = datetime.datetime(y, m, d, 0)
         print(dt_update)
-        return dt_update
+        if rangeEnd < dt_update & dt_update < rangeEnd:
+            return dt_update.strftime("%Y/%m/%d %0:00")
 
     raise ValueError("OCR Failed. 更新日が取得できませんでした。")
