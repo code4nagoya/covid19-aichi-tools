@@ -48,9 +48,17 @@ def findpath(url, searchWord):
     page_url = base_url + url
     raw_html = urllib.request.urlopen(page_url)
     soup = BeautifulSoup(raw_html, "html.parser")
+
+    # ↓のような HTML を想定
+    # <p>
+    #   <span>▶ 愛知県内の発生事例</span>
+    #   <a href="/uploaded/attachment/359857.pdf">12月</a>
+    #   <a href="/uploaded/attachment/354550.pdf">11月まで</a>
+    # </p>
+    patientBlock = soup.find(text=lambda t: t and t.find("発生事例") >= 0).parent.parent
     table_link = ""
     ext = ""
-    for aa in soup.find_all("a"):
+    for aa in patientBlock.find_all("a"):
         link = aa.get("href")
         name = aa.get_text()
         if searchWord in name:
@@ -134,7 +142,7 @@ def exceltime2datetime(et):
 
 if __name__ == "__main__":
 
-    months = ["8月", "9月", "10月", "11月", "12月"]
+    months = ["8月", "８月", "9月", "９月", "10月", "１０月", "11月", "１１月", "12月", "１２月"]
 
     i = 0
     dfs = []
@@ -143,8 +151,10 @@ if __name__ == "__main__":
         path, ext = findpath("/site/covid19-aichi/", month)
         
         if ext == "xlsx":
+            print(month + " xlsx is found.")
             df = convert_xlsx(path, "./data/source" + str(i) + "." + ext)
         elif ext == "pdf":
+            print(month + " pdf is found.")
             df = convert_pdf(path, "./data/source" + str(i) + "." + ext, "./data/source" + str(i) + ".csv")
         else:
             print(month + " is not found.")
