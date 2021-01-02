@@ -71,7 +71,7 @@ def findpath(url, searchWord):
                 ext = "pdf"
     return table_link, ext
 
-def convert_pdf(FILE_PATH, pdf_path, csv_path):
+def convert_pdf(FILE_PATH, pdf_path, csv_path, year):
     # 最新版のPDFをダウンロード
     page_url = base_url + FILE_PATH
     with urllib.request.urlopen(page_url) as b:
@@ -91,9 +91,13 @@ def convert_pdf(FILE_PATH, pdf_path, csv_path):
     df_csv_body = df_csv_body[df_csv_body[1].str.match(".*月.*日")] # 発表日列が○月○日を行を抽出(欠番を除去)
     df_csv = pd.concat([df_csv_header, df_csv_body])
     
+    def date_parser(s):
+        mo, dt = map(int, re.findall("[0-9]{1,2}", s))
+        return pd.Timestamp(year=year, month=mo, day=dt)
+
     # csvに保存
     df_csv.to_csv(csv_path, index=False, header=False)
-    df = pd.read_csv(csv_path, parse_dates=["発表日"], date_parser=my_parser)
+    df = pd.read_csv(csv_path, parse_dates=["発表日"], date_parser=date_parser)
     df = add_date(df).fillna("")
     str_index = pd.Index([str(num) for num in list(df.index)])
     df = df.set_index(str_index)
@@ -128,11 +132,6 @@ def add_date(df):
     df["short_date"] = basedate.dt.strftime("%m\\/%d")
     return df
 
-def my_parser(s):
-    y = datetime.now().year
-    m, d = map(int, re.findall("[0-9]{1,2}", s))
-    return pd.Timestamp(year=y, month=m, day=d)
-
 def exceltime2datetime(et):
     if et < 60:
         days = pd.to_timedelta(et - 1, unit='days')
@@ -142,11 +141,16 @@ def exceltime2datetime(et):
 
 if __name__ == "__main__":
 
-    months = ["8月", "８月", "9月", "９月", "10月", "１０月", "11月", "１１月", "12月", "１２月"]
+    monthYears = [
+        ("12月", 2020),
+        ("１２月", 2020),
+        ("1月", 2021),
+        ("１月", 2021),
+    ]
 
     i = 0
     dfs = []
-    for month in months:
+    for (month, year) in monthYears:
         i = i + 1
         path, ext = findpath("/site/covid19-aichi/", month)
         
@@ -155,7 +159,7 @@ if __name__ == "__main__":
             df = convert_xlsx(path, "./data/source" + str(i) + "." + ext)
         elif ext == "pdf":
             print(month + " pdf is found.")
-            df = convert_pdf(path, "./data/source" + str(i) + "." + ext, "./data/source" + str(i) + ".csv")
+            df = convert_pdf(path, "./data/source" + str(i) + "." + ext, "./data/source" + str(i) + ".csv", year)
         else:
             print(month + " is not found.")
             continue
