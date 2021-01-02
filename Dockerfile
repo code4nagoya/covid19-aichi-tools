@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.8
 
 # setup
 RUN apt-get update \
@@ -28,8 +28,8 @@ COPY *.py /covid19/
 COPY *.txt /covid19/
 COPY data /covid19/
 
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# RUN pip3 install --upgrade pip
+RUN pip3 install -r requirements.txt
 
 # execute
 RUN mkdir /covid19/data
