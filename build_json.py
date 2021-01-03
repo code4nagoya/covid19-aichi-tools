@@ -15,7 +15,6 @@ patients_list = []
 patients_date_num_dic = {}
 patients_date_place_dic = {}
 patients_date_age_sex_dic = {}
-patients_date_sex_dic = {}
 
 # 引数を取得 異常系処理はしてないので注意
 args = sys.argv
@@ -67,7 +66,6 @@ for date in reversed(datelist):
         patients_date_num_dic.setdefault(dtKey, 0)
         patients_date_place_dic.setdefault(dtKey, {})
         patients_date_age_sex_dic.setdefault(dtKey, {})
-        patients_date_sex_dic.setdefault(dtKey, {})
         patients_summary_list.append({
             "日付": dtKey,
             "小計": patients_date_num_dic[dtKey],
