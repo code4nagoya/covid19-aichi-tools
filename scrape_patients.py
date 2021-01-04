@@ -101,6 +101,12 @@ def convert_pdf(FILE_PATH, pdf_path, csv_path, year):
     df = add_date(df).fillna("")
     str_index = pd.Index([str(num) for num in list(df.index)])
     df = df.set_index(str_index)
+
+    # CJK部首置換
+    cjk = str.maketrans("⻲⻑黑戶⻯⻄⻘⻤⼾⾧⼿", "亀長黒戸竜西青鬼戸長手")
+    df["住居地"] = df["住居地"].str.normalize("NFKC")
+    df["住居地"] = df["住居地"].apply(lambda s: s.translate(cjk))
+
     # df.index.name = "No"
     # print(df)
     return df
@@ -127,9 +133,11 @@ def add_date(df):
     basedate = df["発表日"]
     df["発表日"] = basedate.dt.strftime("%Y/%m/%d %H:%M")
     df["date"] = basedate.dt.strftime("%Y-%m-%d")
-    df["w"] = [str(int(w)+1) if int(w)+1 != 7 else "0"
-               for w in basedate.dt.dayofweek]
-    df["short_date"] = basedate.dt.strftime("%m\\/%d")
+
+    # 年代(age)と性別(sex)列を追加
+    df_ages = df["年代・性別"].str.extract("(.+)(男性|女性|その他)").rename(columns={0: "age", 1: "sex"})
+    df = df.join(df_ages)
+
     return df
 
 def exceltime2datetime(et):
