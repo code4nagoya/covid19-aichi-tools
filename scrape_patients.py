@@ -137,6 +137,8 @@ def add_date(df):
     # 年代(age)と性別(sex)列を追加
     df_ages = df["年代・性別"].str.extract("(.+)(男性|女性|その他)").rename(columns={0: "age", 1: "sex"})
     df = df.join(df_ages)
+    df["age"] = df["age"].apply(lambda x : str(x).strip())
+    df["sex"] = df["sex"].apply(lambda x : str(x).strip())
 
     return df
 
