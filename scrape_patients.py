@@ -26,19 +26,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
-import camelot
-import codecs
-import json
-import os
 import pandas as pd
+from bs4 import BeautifulSoup
+import os
 import re
 import traceback
-import urllib.request
-from bs4 import BeautifulSoup
-from datetime import datetime
 
+import pathlib
+import requests
+import pdfplumber
 
 base_url = "https://www.pref.aichi.jp"
+
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko"
+}
 
 outdir = './data'
 if not os.path.exists(outdir):
@@ -46,8 +48,10 @@ if not os.path.exists(outdir):
 
 def findpath(url, searchWord):
     page_url = base_url + url
-    raw_html = urllib.request.urlopen(page_url)
-    soup = BeautifulSoup(raw_html, "html.parser")
+    r = requests.get(page_url, headers=headers)
+    r.raise_for_status()
+
+    soup = BeautifulSoup(r.content, "html.parser")    
 
     # ↓のような HTML を想定
     # <p>
@@ -63,126 +67,111 @@ def findpath(url, searchWord):
         name = aa.get_text()
         if searchWord in name:
             table_link = link
-            if "Excelファイル" in name:
-                ext = "xlsx"
-                # Excelファイルなら確定
-                break
-            elif "PDFファイル" in name:
+            if "PDFファイル" in name:
                 ext = "pdf"
     return table_link, ext
 
-def convert_pdf(FILE_PATH, pdf_path, csv_path, year):
-    # 最新版のPDFをダウンロード
-    page_url = base_url + FILE_PATH
-    with urllib.request.urlopen(page_url) as b:
-        with open(pdf_path, "bw") as f:
-            f.write(b.read())
+def fetch_file(url, dir="."):
 
-    tables = camelot.read_pdf(
-        pdf_path, pages="1-end", split_text=True,
-        strip_text="\n", line_scale=40)
+    r = requests.get(url, headers=headers)
+    r.raise_for_status()
 
-    df_csv = pd.concat([table.df for table in tables])
+    p = pathlib.Path(dir, pathlib.PurePath(url).name)
+    p.parent.mkdir(parents=True, exist_ok=True)
 
-    # 2行目以降の(各頁に挿入される)ヘッダ行を除去
-    df_csv_header = df_csv[:1]
-    df_csv_body = df_csv[1:]
-    df_csv_body = df_csv_body[df_csv_body[0].str.isnumeric()] # No列が数値の行を抽出
-    df_csv_body = df_csv_body[df_csv_body[1].str.match(".*月.*日")] # 発表日列が○月○日を行を抽出(欠番を除去)
-    df_csv = pd.concat([df_csv_header, df_csv_body])
-    
-    def date_parser(s):
-        mo, dt = map(int, re.findall("[0-9]{1,2}", s))
-        return pd.Timestamp(year=year, month=mo, day=dt)
+    with p.open(mode="wb") as fw:
+        fw.write(r.content)
+    return p
 
-    # csvに保存
-    df_csv.to_csv(csv_path, index=False, header=False)
-    df = pd.read_csv(csv_path, parse_dates=["発表日"], date_parser=date_parser)
-    df = add_date(df).fillna("")
-    str_index = pd.Index([str(num) for num in list(df.index)])
-    df = df.set_index(str_index)
+def days2date(s):
+
+    # No.16577以降は2021年
+    # TODO Noが変わる可能性があるので決め打ちはやめたい。"1月" に変化する度に year を加算する？
+    y = 2021 if s.name > 16576 else 2020
+
+    days = re.findall("[0-9]{1,2}", s["発表日"])
+
+    if len(days) == 2:
+        m, d = map(int, days)
+        return pd.Timestamp(year=y, month=m, day=d)
+    else:
+        return pd.NaT
+
+def convert_pdf(FILE_PATHs):
+    dfs = []
+    for FILE_PATH in FILE_PATHs:
+        # 最新版のPDFをダウンロード
+        page_url = base_url + FILE_PATH
+
+        path_pdf = fetch_file(page_url, './data')
+
+        with pdfplumber.open(path_pdf) as pdf:
+            for page in pdf.pages:
+                table = page.extract_table()
+                df_tmp = pd.DataFrame(table[1:], columns=table[0])
+                dfs.append(df_tmp)
+
+    df = pd.concat(dfs).set_index("No")
+
+    # 発表日が欠損を削除
+    df.dropna(subset=["発表日"], inplace=True)
+
+    # Noを数値に変換
+    df.index = df.index.astype(int)
+
+    # Noでソート
+    df.sort_index(inplace=True)
+
+    # 月日から年月日に変換
+    df["date"] = df.apply(days2date, axis=1)
+    df["発表日"] = df["date"].apply(lambda s: s.strftime("%Y/%m/%d %H:%M"))
+
+    # 年代(age)と性別(sex)列を追加
+    df["年代・性別"] = df["年代・性別"].str.normalize("NFKC")
+    df_ages = df["年代・性別"].str.extract("(.+)(男性|女性|その他)").rename(columns={0: "age", 1: "sex"})
+    df = df.join(df_ages)
+    df["age"] = df["age"].str.strip()
+    df["age"] = df["age"].replace("10歳未満代", "10歳未満")
+    df["sex"] = df["sex"].str.strip()
 
     # CJK部首置換
     cjk = str.maketrans("⻲⻑黑戶⻯⻄⻘⻤⼾⾧⼿", "亀長黒戸竜西青鬼戸長手")
     df["住居地"] = df["住居地"].str.normalize("NFKC")
     df["住居地"] = df["住居地"].apply(lambda s: s.translate(cjk))
 
-    # df.index.name = "No"
-    # print(df)
-    return df
+    p = pathlib.Path("./data/patients.csv")
+    p.parent.mkdir(parents=True, exist_ok=True)
 
-def convert_xlsx(FILE_PATH, xlsx_path):
-    # 最新版のExcelをダウンロード
-    page_url = base_url + FILE_PATH
-    with urllib.request.urlopen(page_url) as b:
-        with open(xlsx_path, "bw") as f:
-            f.write(b.read())
-
-    df = pd.read_excel(xlsx_path, header=2, index_col=None, dtype={2: object})
-    df["発表日"] = df["発表日"].apply(exceltime2datetime)
-    df = df.replace(0,"")
-    df = add_date(df).fillna("")
-    str_index = pd.Index([str(num) for num in list(df.index)])
-    df = df.set_index(str_index)
-    # print(df)
-    # exit()
+    df.to_csv(p, encoding="utf_8")
 
     return df
-
-def add_date(df):
-    basedate = df["発表日"]
-    df["発表日"] = basedate.dt.strftime("%Y/%m/%d %H:%M")
-    df["date"] = basedate.dt.strftime("%Y-%m-%d")
-
-    # 年代(age)と性別(sex)列を追加
-    df_ages = df["年代・性別"].str.extract("(.+)(男性|女性|その他)").rename(columns={0: "age", 1: "sex"})
-    df = df.join(df_ages)
-    df["age"] = df["age"].apply(lambda x : str(x).strip())
-    df["sex"] = df["sex"].apply(lambda x : str(x).strip())
-
-    return df
-
-def exceltime2datetime(et):
-    if et < 60:
-        days = pd.to_timedelta(et - 1, unit='days')
-    else:
-        days = pd.to_timedelta(et - 2, unit='days')
-    return pd.to_datetime('1900/1/1') + days
 
 if __name__ == "__main__":
 
     monthYears = [
-        ("12月", 2020),
-        ("１２月", 2020),
-        ("1月", 2021),
-        ("１月", 2021),
+        "12月",
+        "１２月",
+        "1月",
+        "１月",
     ]
 
-    i = 0
-    dfs = []
-    for (month, year) in monthYears:
-        i = i + 1
+    paths = []
+    for month in monthYears:
         path, ext = findpath("/site/covid19-aichi/", month)
         
-        if ext == "xlsx":
-            print(month + " xlsx is found.")
-            df = convert_xlsx(path, "./data/source" + str(i) + "." + ext)
-        elif ext == "pdf":
-            print(month + " pdf is found.")
-            df = convert_pdf(path, "./data/source" + str(i) + "." + ext, "./data/source" + str(i) + ".csv", year)
+        if ext == "pdf":
+            print(month + " ---> FOUND!")
+            paths.append(path)
         else:
-            print(month + " is not found.")
+            print(month + " ---> not found.")
             continue
 
-        dfs.append(df)
-
-    if len(dfs) == 0:
-        print("No patients pdf/xlsx.")
+    if len(paths) == 0:
+        print("No patients pdf.")
         exit()
 
     try:
-        df = pd.concat(dfs)
-        df.to_csv('data/patients.csv', index=False, header=True)
+        convert_pdf(paths)
     except Exception:
         print("===================")
         traceback.print_exc()
