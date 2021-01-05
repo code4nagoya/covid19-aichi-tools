@@ -109,12 +109,28 @@ with open('data/patients.csv', 'r', encoding="utf-8") as csvfile:
 
         patients_date_place_dic.setdefault(dt, {})
         placeDic = patients_date_place_dic[dt]
-        cityCode = cities.get(row['住居地'], 'NOT_FOUND')
+
+        if row['住居地'] in cities:
+            cityCode = cities[row['住居地']]
+        else:
+            cityCode = 'NOT_FOUND'
+            print('住居地 ' + row['住居地'] + ' to NOT_FOUND')
+
         placeDic.setdefault(cityCode, 0)
         placeDic[cityCode] += 1
 
-        sex = sexes.get(row['sex'], 'その他')
-        age = ages.get(row['age'], 'その他')
+        if row['sex'] in sexes:
+            sex = sexes[row['sex']]
+        else:
+            sex = 'その他'
+            print('sex ' + row['sex'] + ' to その他')
+
+        if row['age'] in ages:
+            age = ages[row['age']]
+        else:
+            age = 'その他'
+            print('age ' + row['age'] + ' to その他')
+
         patients_date_age_sex_dic.setdefault(dt, {})
         ageDic = patients_date_age_sex_dic[dt]
         ageDic.setdefault(age, {})
@@ -176,10 +192,10 @@ with open('data/inspections_summary.csv', 'r', encoding="utf-8") as csvfile:
 
 data = {
     "lastUpdate": JST_current_time,
-    "patients": {
-        "date": JST_current_time,
-        "data": patients_list
-    },
+    # "patients": {
+    #     "date": JST_current_time,
+    #     "data": patients_list
+    # },
     "patients_summary" : {
         "date": JST_current_time,
         "data": patients_summary_list
@@ -198,5 +214,5 @@ data = {
     }
 }
 
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-print(json.dumps(data, indent=4, ensure_ascii=False))
+with open('/covid19/data/data.json', 'w') as f:
+    json.dump(data, f, indent=4, ensure_ascii=False)

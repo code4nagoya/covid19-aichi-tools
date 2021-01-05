@@ -1,10 +1,9 @@
-camelot-py[cv]==0.8.0
 pandas
 beautifulsoup4
 xlrd
 lxml
-pdfminer.six==20200517
-opencv-python==4.3.0.38
+opencv-python
 requests
 html5lib
 pytesseract
+pdfplumber

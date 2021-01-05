@@ -12,7 +12,6 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
 import pytesseract
-import cv2
 import datetime
 import csv
 
@@ -24,9 +23,13 @@ import recognize_main_summary_table_3 as table_pattern3
 import recognize_main_summary_remarks_1 as remarks_pattern1
 import recognize_main_summary_remarks_2 as remarks_pattern2
 
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko",
+}
+
 def get_file(url, dir="."):
 
-    r = requests.get(url)
+    r = requests.get(url, headers=headers)
 
     p = pathlib.Path(dir, "main_summary" + pathlib.PurePath(url).suffix)
     p.parent.mkdir(parents=True, exist_ok=True)
@@ -107,9 +110,6 @@ def to_csv(dt, row, remarks, dir):
 if __name__ == "__main__":
     url = "https://www.pref.aichi.jp/site/covid19-aichi/"
 
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko",
-    }
     r = requests.get(url, headers=headers)
 
     r.raise_for_status()

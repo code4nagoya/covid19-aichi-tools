@@ -23,7 +23,7 @@ wget "https://docs.google.com/spreadsheets/d/1-w8rowCmCG7lmuo5c0jQ0Dh2Frl4hOmpVr
 echo 4.検査人数 end
 
 echo 5.data.json 生成 start
-python3 /covid19/build_json.py `date -d "1 day ago" +'%Y-%m-%d'` > /covid19/data/data.json
+python3 /covid19/build_json.py `date -d "1 day ago" +'%Y-%m-%d'`
 echo 5.data.json 生成 end
 
 # cat /covid19/data/*.json /covid19/data/*.csv
