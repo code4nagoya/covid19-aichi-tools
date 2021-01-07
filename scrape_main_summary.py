@@ -12,7 +12,6 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
 import pytesseract
-import datetime
 import csv
 
 import recognize_main_summary_date_1 as date_pattern1
