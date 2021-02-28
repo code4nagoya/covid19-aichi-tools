@@ -86,8 +86,11 @@ def fetch_file(url, dir="."):
 def days2date(s):
 
     # No.16577以降は2021年
-    # TODO Noが変わる可能性があるので決め打ちはやめたい。"1月" に変化する度に year を加算する？
     y = 2021 if s.name > 16576 else 2020
+
+    # 以下の No は事後発表なので 2020年
+    if s.name in [25753, 25754, 25755]:
+        y = 2020    
 
     days = re.findall("[0-9]{1,2}", s["発表日"])
 
