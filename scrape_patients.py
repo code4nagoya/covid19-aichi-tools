@@ -56,10 +56,12 @@ def findpath(url, searchWord):
     # ↓のような HTML を想定
     # <p>
     #   <span>▶ 愛知県内の発生事例</span>
+    # </p>
+    # <p>
     #   <a href="/uploaded/attachment/359857.pdf">12月</a>
     #   <a href="/uploaded/attachment/354550.pdf">11月まで</a>
     # </p>
-    patientBlock = soup.find(text=lambda t: t and t.find("発生事例") >= 0).parent.parent
+    patientBlock = soup.find(text=lambda t: t and t.find("発生事例") >= 0).parent.parent.next_sibling
     table_link = ""
     ext = ""
     for aa in patientBlock.find_all("a"):
