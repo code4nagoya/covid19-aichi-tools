@@ -179,3 +179,4 @@ $ docker-compose run --rm covid19-aichi-tool
 
 1. ``docker image`` で Docker Image して "covid19-aichi-tools" の名前が付いているものを見つける
 2. ``docker rmi image名`` で削除
+
