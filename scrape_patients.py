@@ -35,6 +35,7 @@ import traceback
 import pathlib
 import requests
 import pdfplumber
+import math
 
 base_url = "https://www.pref.aichi.jp"
 
@@ -53,15 +54,15 @@ def findpath(url, searchWord):
 
     soup = BeautifulSoup(r.content, "html.parser")    
 
-    # ↓のような HTML を想定
+    # ↓のような HTML を想定(2021/09/01〜)
     # <p>
-    #   <span>▶ 愛知県内の発生事例</span>
+    #   <span style="font-size:110%">▶ 愛知県内の感染者の発生事例</span>
+    #   <br>　
+    #   ｜<a href="/uploaded/attachment/391519.pdf">9月 [PDFファイル／346KB]</a>
+    #   ｜<a href="/uploaded/attachment/391520.pdf">8月まで [PDFファイル／3.81MB]</a>
+    #   ｜
     # </p>
-    # <p>
-    #   <a href="/uploaded/attachment/359857.pdf">12月</a>
-    #   <a href="/uploaded/attachment/354550.pdf">11月まで</a>
-    # </p>
-    patientBlock = soup.find(text=lambda t: t and t.find("発生事例") >= 0).parent.parent.next_sibling
+    patientBlock = soup.find(text=lambda t: t and t.find("発生事例") >= 0).parent.parent
     table_link = ""
     ext = ""
     for aa in patientBlock.find_all("a"):
@@ -110,11 +111,27 @@ def convert_pdf(FILE_PATHs):
 
         path_pdf = fetch_file(page_url, './data')
 
+        # PDF のページ総数を得る
+        pageNum = 0
         with pdfplumber.open(path_pdf) as pdf:
-            for page in pdf.pages:
-                table = page.extract_table()
-                df_tmp = pd.DataFrame(table[1:], columns=table[0])
-                dfs.append(df_tmp)
+            pageNum = len(pdf.pages)
+
+        # NOTE
+        # ページ数が1700超のPDFを順次処理すると、
+        # 約612ページを処理(extract_table)するところで激遅になり強制終了してしまう。
+        # ので、300ページ毎に PDF を開き直して処理を行う。
+        BUF_PAGE_NUM = 300 # 1回の処理ページ数
+        loops = range(math.ceil(pageNum / BUF_PAGE_NUM))
+        for lp in loops:
+            with pdfplumber.open(path_pdf) as pdf:
+                for pg in range(BUF_PAGE_NUM):
+                    pageIdx = (BUF_PAGE_NUM * lp) + pg
+                    if pageIdx >= pageNum:
+                        break
+                    page = pdf.pages[pageIdx]
+                    table = page.extract_table()
+                    df_tmp = pd.DataFrame(table[1:], columns=table[0])
+                    dfs.append(df_tmp)
 
     df = pd.concat(dfs).set_index("No")
 
