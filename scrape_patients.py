@@ -106,6 +106,7 @@ def days2date(s):
 def convert_pdf(FILE_PATHs):
     dfs = []
     for FILE_PATH in FILE_PATHs:
+        print(FILE_PATH + " を抽出開始")
         # 最新版のPDFをダウンロード
         page_url = base_url + FILE_PATH
 
@@ -115,6 +116,7 @@ def convert_pdf(FILE_PATHs):
         pageNum = 0
         with pdfplumber.open(path_pdf) as pdf:
             pageNum = len(pdf.pages)
+        print("ページ数:" + str(pageNum))
 
         # NOTE
         # ページ数が1700超のPDFを順次処理すると、
@@ -123,6 +125,7 @@ def convert_pdf(FILE_PATHs):
         BUF_PAGE_NUM = 300 # 1回の処理ページ数
         loops = range(math.ceil(pageNum / BUF_PAGE_NUM))
         for lp in loops:
+            print(str(lp * BUF_PAGE_NUM) + "ページ〜を処理開始")
             with pdfplumber.open(path_pdf) as pdf:
                 for pg in range(BUF_PAGE_NUM):
                     pageIdx = (BUF_PAGE_NUM * lp) + pg
@@ -132,7 +135,10 @@ def convert_pdf(FILE_PATHs):
                     table = page.extract_table()
                     df_tmp = pd.DataFrame(table[1:], columns=table[0])
                     dfs.append(df_tmp)
+            print(str(lp * BUF_PAGE_NUM) + "ページ〜の処理終了")
+        print(FILE_PATH + " の抽出終了")
 
+    print("データ加工開始")
     df = pd.concat(dfs).set_index("No")
 
     # 発表日が欠損を削除
@@ -163,10 +169,14 @@ def convert_pdf(FILE_PATHs):
     df["住居地"] = df["住居地"].str.normalize("NFKC")
     df["住居地"] = df["住居地"].apply(lambda s: s.translate(cjk))
 
+    print("データ加工開始")
+
+    print("CSV へ出力開始")
     p = pathlib.Path("./data/patients.csv")
     p.parent.mkdir(parents=True, exist_ok=True)
 
     df.to_csv(p, encoding="utf_8")
+    print("CSV へ出力終了")
 
     return df
 
