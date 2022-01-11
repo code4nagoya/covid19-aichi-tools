@@ -88,8 +88,14 @@ def fetch_file(url, dir="."):
 
 def days2date(s):
 
-    # No.16577以降は2021年
-    y = 2021 if s.name > 16576 else 2020
+    if s.name > 107186:
+        # No.107187以降は2022年
+        y = 2022
+    elif s.name > 16576:
+        # No.16577以降は2021年
+        y = 2021
+    else:
+        y = 2020
 
     # 以下の No は事後発表なので 2020年
     if s.name in [25753, 25754, 25755]:
