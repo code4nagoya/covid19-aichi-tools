@@ -68,7 +68,8 @@ def findpath(url, searchWord):
     for aa in patientBlock.find_all("a"):
         link = aa.get("href")
         name = aa.get_text()
-        if searchWord in name:
+        result = re.match(searchWord, name)
+        if result:
             table_link = link
             if "PDFファイル" in name:
                 ext = "pdf"
@@ -189,39 +190,39 @@ def convert_pdf(FILE_PATHs):
 if __name__ == "__main__":
 
     monthYears = [
-        "12月",
-        "１２月",
-#         "1月",
-#         "１月",
-#         "2月",
-#         "２月",
-#         "3月",
-#         "３月",
-#         "4月",
-#         "４月",
-#         "5月",
-#         "５月",
-#         "6月",
-#         "６月",
-#         "7月",
-#         "７月",
-#         "8月",
-#         "８月",
-#         "9月",
-#         "９月",
-        "10月",
-        "１０月",
-        "11月",
-        "１１月",
+        r"^1月",
+        r"^１月",
+        r"^2月",
+        r"^２月",
+        r"^3月",
+        r"^３月",
+        r"^4月",
+        r"^４月",
+        r"^5月",
+        r"^５月",
+        r"^6月",
+        r"^６月",
+        r"^7月",
+        r"^７月",
+        r"^8月",
+        r"^８月",
+        r"^9月",
+        r"^９月",
+        r"^10月",
+        r"^１０月",
+        r"^11月",
+        r"^１１月",
+        r"^12月",
+        r"^１２月",
     ]
 
-    paths = []
+    paths = set()
     for month in monthYears:
         path, ext = findpath("/site/covid19-aichi/", month)
         
         if ext == "pdf":
             print(month + " ---> FOUND!")
-            paths.append(path)
+            paths.add(path)
         else:
             print(month + " ---> not found.")
             continue
@@ -231,7 +232,7 @@ if __name__ == "__main__":
         exit()
 
     try:
-        convert_pdf(paths)
+        convert_pdf(list(paths))
     except Exception:
         print("===================")
         traceback.print_exc()
