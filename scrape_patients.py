@@ -152,6 +152,7 @@ def convert_pdf(FILE_PATHs):
     df.dropna(subset=["発表日"], inplace=True)
     # 欠番の行を削除
     df = df[~df["発表日"].str.contains("欠番")]
+    df = df[~df["年代・性別"].str.contains("確認中")]
 
     # Noを数値に変換
     df.index = df.index.astype(int)
