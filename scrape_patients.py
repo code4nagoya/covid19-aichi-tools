@@ -152,7 +152,14 @@ def convert_pdf(FILE_PATHs):
     df.dropna(subset=["発表日"], inplace=True)
     # 欠番の行を削除
     df = df[~df["発表日"].str.contains("欠番")]
-    df = df[~df["年代・性別"].str.contains("確認中")]
+
+    # 確認中 の行は 名古屋市 のデータとして扱う
+    # https://github.com/code4nagoya/covid19-aichi-tools/issues/99#issuecomment-1018461373
+    # より引用
+    #  名古屋市HPで公表されていた新規陽性者一覧が2022/1/18公表分より一覧からサマリ形式に変更となり、
+    #  名古屋市から愛知県に新規陽性者一覧が届かず、（確認中）となっているものと推察されます。
+    #  「備考」列が"名古屋市発表xxxxx"となっており名古屋市公表分と分かります。
+    df.loc[df["年代・性別"].str.contains("確認中"), ["住居地"]] = "名古屋市"
 
     # Noを数値に変換
     df.index = df.index.astype(int)
