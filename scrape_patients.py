@@ -57,9 +57,11 @@ def findpath(url, searchWord):
     # ↓のような HTML を想定(2021/09/01〜)
     # <p>
     #   <span style="font-size:110%">▶ 愛知県内の感染者の発生事例</span>
-    #   <br>　
-    #   ｜<a href="/uploaded/attachment/391519.pdf">9月 [PDFファイル／346KB]</a>
-    #   ｜<a href="/uploaded/attachment/391520.pdf">8月まで [PDFファイル／3.81MB]</a>
+    #   <br>
+    #   ｜<a href="/uploaded/attachment/410280.pdf">2022年3月 [PDFファイル／1.72MB]</a>
+    #   ｜<a href="/uploaded/attachment/409383.pdf">2022年1～2月 [PDFファイル／8.18MB]</a>
+    #   ｜<br>　｜<a href="/uploaded/attachment/409381.pdf">2021年 [PDFファイル／3.99MB]</a>
+    #   ｜<a href="/uploaded/attachment/409380.pdf">2020年 [PDFファイル／918KB]</a>
     #   ｜
     # </p>
     patientBlock = soup.find(text=lambda t: t and t.find("発生事例") >= 0).parent.parent
@@ -198,30 +200,20 @@ def convert_pdf(FILE_PATHs):
 if __name__ == "__main__":
 
     monthYears = [
-        r"^1月",
-        r"^１月",
-        r"^2月",
-        r"^２月",
-        r"^3月",
-        r"^３月",
-        r"^4月",
-        r"^４月",
-        r"^5月",
-        r"^５月",
-        r"^6月",
-        r"^６月",
-        r"^7月",
-        r"^７月",
-        r"^8月",
-        r"^８月",
-        r"^9月",
-        r"^９月",
-        r"^10月",
-        r"^１０月",
-        r"^11月",
-        r"^１１月",
-        r"^12月",
-        r"^１２月",
+        r"^2022年.*1月",
+        r"^2022年.*2月",
+        r"^2022年.*3月",
+        r"^2022年.*4月",
+        r"^2022年.*5月",
+        r"^2022年.*6月",
+        r"^2022年.*7月",
+        r"^2022年.*8月",
+        r"^2022年.*9月",
+        r"^2022年.*10月",
+        r"^2022年.*11月",
+        r"^2022年.*12月",
+        r"^2021年",
+        r"^2020年",
     ]
 
     paths = set()
