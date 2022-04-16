@@ -47,7 +47,7 @@ outdir = './data'
 if not os.path.exists(outdir):
     os.mkdir(outdir)
 
-def findpath(url, searchWord):
+def findpaths(url):
     page_url = base_url + url
     r = requests.get(page_url, headers=headers)
     r.raise_for_status()
@@ -67,15 +67,13 @@ def findpath(url, searchWord):
     patientBlock = soup.find(text=lambda t: t and t.find("発生事例") >= 0).parent.parent
     table_link = ""
     ext = ""
+
+    links = set()
     for aa in patientBlock.find_all("a"):
         link = aa.get("href")
-        name = aa.get_text()
-        result = re.match(searchWord, name)
-        if result:
-            table_link = link
-            if "PDFファイル" in name:
-                ext = "pdf"
-    return table_link, ext
+        if link.endswith("pdf"):
+            links.add(link)
+    return links
 
 def fetch_file(url, dir="."):
 
@@ -199,33 +197,9 @@ def convert_pdf(FILE_PATHs):
 
 if __name__ == "__main__":
 
-    monthYears = [
-        r"^2022年.*1月",
-        r"^2022年.*2月",
-        r"^2022年.*3月",
-        r"^2022年.*4月",
-        r"^2022年.*5月",
-        r"^2022年.*6月",
-        r"^2022年.*7月",
-        r"^2022年.*8月",
-        r"^2022年.*9月",
-        r"^2022年.*10月",
-        r"^2022年.*11月",
-        r"^2022年.*12月",
-        r"^2021年",
-        r"^2020年",
-    ]
-
-    paths = set()
-    for month in monthYears:
-        path, ext = findpath("/site/covid19-aichi/", month)
-        
-        if ext == "pdf":
-            print(month + " ---> FOUND!")
-            paths.add(path)
-        else:
-            print(month + " ---> not found.")
-            continue
+    paths = findpaths("/site/covid19-aichi/")
+    print("Found PDF links")
+    print(paths)
 
     if len(paths) == 0:
         print("No patients pdf.")
