@@ -36,6 +36,7 @@ import pathlib
 import requests
 import pdfplumber
 import math
+import numpy as np
 
 base_url = "https://www.pref.aichi.jp"
 
@@ -187,10 +188,15 @@ def convert_pdf(FILE_PATHs):
     print("データ加工開始")
 
     print("CSV へ出力開始")
-    p = pathlib.Path("./data/patients.csv")
-    p.parent.mkdir(parents=True, exist_ok=True)
 
-    df.to_csv(p, encoding="utf_8")
+
+    dfCount = 1
+    for df_split in np.array_split(df, 3):
+        p = pathlib.Path("./data/patients" + str(dfCount) + ".csv")
+        p.parent.mkdir(parents=True, exist_ok=True)
+        df_split.to_csv(p, encoding="utf_8")
+        dfCount = dfCount + 1
+
     print("CSV へ出力終了")
 
     return df

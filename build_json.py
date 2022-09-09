@@ -99,44 +99,45 @@ ages = {
     '110代':'110代',
 }
 
-with open('data/patients.csv', 'r', encoding="utf-8") as csvfile:
-    reader = csv.DictReader(csvfile)
-    for row in reader:
-        patients_list.append(row)
-        dt = row['date']
-        patients_date_num_dic.setdefault(dt, 0)
-        patients_date_num_dic[dt] += 1
+for csvFile in ['data/patients1.csv', 'data/patients2.csv', 'data/patients3.csv']:
+    with open(csvFile, 'r', encoding="utf-8") as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            patients_list.append(row)
+            dt = row['date']
+            patients_date_num_dic.setdefault(dt, 0)
+            patients_date_num_dic[dt] += 1
 
-        patients_date_place_dic.setdefault(dt, {})
-        placeDic = patients_date_place_dic[dt]
+            patients_date_place_dic.setdefault(dt, {})
+            placeDic = patients_date_place_dic[dt]
 
-        if row['住居地'] in cities:
-            cityCode = cities[row['住居地']]
-        else:
-            cityCode = 'NOT_FOUND'
-            print('住居地 ' + row['住居地'] + ' to NOT_FOUND')
+            if row['住居地'] in cities:
+                cityCode = cities[row['住居地']]
+            else:
+                cityCode = 'NOT_FOUND'
+                print('住居地 ' + row['住居地'] + ' to NOT_FOUND')
 
-        placeDic.setdefault(cityCode, 0)
-        placeDic[cityCode] += 1
+            placeDic.setdefault(cityCode, 0)
+            placeDic[cityCode] += 1
 
-        if row['sex'] in sexes:
-            sex = sexes[row['sex']]
-        else:
-            sex = 'その他'
-            print('sex ' + row['sex'] + ' to その他')
+            if row['sex'] in sexes:
+                sex = sexes[row['sex']]
+            else:
+                sex = 'その他'
+                print('sex ' + row['sex'] + ' to その他')
 
-        if row['age'] in ages:
-            age = ages[row['age']]
-        else:
-            age = 'その他'
-            print('age ' + row['age'] + ' to その他')
+            if row['age'] in ages:
+                age = ages[row['age']]
+            else:
+                age = 'その他'
+                print('age ' + row['age'] + ' to その他')
 
-        patients_date_age_sex_dic.setdefault(dt, {})
-        ageDic = patients_date_age_sex_dic[dt]
-        ageDic.setdefault(age, {})
-        sexDic = ageDic[age]
-        sexDic.setdefault(sex, 0)
-        sexDic[sex] += 1
+            patients_date_age_sex_dic.setdefault(dt, {})
+            ageDic = patients_date_age_sex_dic[dt]
+            ageDic.setdefault(age, {})
+            sexDic = ageDic[age]
+            sexDic.setdefault(sex, 0)
+            sexDic[sex] += 1
 
 
 # 日付のリストを生成
