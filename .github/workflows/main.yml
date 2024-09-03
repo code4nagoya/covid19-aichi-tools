@@ -39,7 +39,7 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - run: git clone -b data git@github.com:code4nagoya/covid19.git data
       - name: upload
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4.1.7
         with:
           name: upload-data
       - run: cp upload-data/* data
